@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (m MongodbStore) Create(ctx context.Context, user entity.User) (entity.User, error) {
+func (m MongodbStore) CreateUser(ctx context.Context, user entity.User) (entity.User, error) {
 
 	coll := m.db.Collection("users")
 
@@ -21,7 +21,7 @@ func (m MongodbStore) Create(ctx context.Context, user entity.User) (entity.User
 	return user, nil
 }
 
-func (m MongodbStore) FindbyID(ctx context.Context, id string) (entity.User, error) {
+func (m MongodbStore) FindUser(ctx context.Context, id string) (entity.User, error) {
 
 	var user entity.User
 	coll := m.db.Collection("users")
@@ -36,7 +36,7 @@ func (m MongodbStore) FindbyID(ctx context.Context, id string) (entity.User, err
 	return user, err
 }
 
-func (m MongodbStore) Update(ctx context.Context, user entity.User) error {
+func (m MongodbStore) UpdateUser(ctx context.Context, user entity.User) error {
 
 	coll := m.db.Collection("users")
 
@@ -45,7 +45,7 @@ func (m MongodbStore) Update(ctx context.Context, user entity.User) error {
 	return err
 }
 
-func (m MongodbStore) Delete(ctx context.Context, id string) error {
+func (m MongodbStore) DeleteUser(ctx context.Context, id string) error {
 
 	coll := m.db.Collection("users")
 
