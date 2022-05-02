@@ -49,7 +49,7 @@ func (m MongodbStore) FindPostsByUserID(ctx context.Context, userID string) ([]e
 	if err != nil {
 		return nil, err
 	}
-	err = cur.Decode(posts)
+	err = cur.All(ctx, &posts)
 	return posts, err
 }
 
