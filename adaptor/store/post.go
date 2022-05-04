@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"gitlab.com/gocastsian/writino/adaptor/store/models"
 	"gitlab.com/gocastsian/writino/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -12,17 +13,21 @@ import (
 func (m MongodbStore) CreatePost(ctx context.Context, post entity.Post) (entity.Post, error) {
 
 	coll := m.db.Collection("posts")
-	post.Id = primitive.NewObjectID()
-	post.CreatedAt = time.Now()
-	res, err := coll.InsertOne(ctx, post)
-	post.Id = res.InsertedID.(primitive.ObjectID)
-	return post, err
+
+	dbModel := models.MapFromPostEntity(post)
+
+	dbModel.Id = primitive.NewObjectID()
+	dbModel.CreatedAt = time.Now()
+	_, err := coll.InsertOne(ctx, dbModel)
+	return models.MapToPostEntity(dbModel), err
 }
 
 func (m MongodbStore) FindPostByID(ctx context.Context, id string) (entity.Post, error) {
 
-	var post entity.Post
 	coll := m.db.Collection("posts")
+
+	var post models.Post
+
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return entity.Post{}, err
@@ -31,14 +36,15 @@ func (m MongodbStore) FindPostByID(ctx context.Context, id string) (entity.Post,
 	filter := bson.D{{"_id", objID}}
 	res := coll.FindOne(ctx, filter)
 	err = res.Decode(&post)
-	return post, err
+	return models.MapToPostEntity(post), err
 }
 
 func (m MongodbStore) FindPostsByUserID(ctx context.Context, userID string) ([]entity.Post, error) {
 
-	var posts []entity.Post
-
 	coll := m.db.Collection("posts")
+
+	var dbModels []models.Post
+	var posts []entity.Post
 
 	userObjID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
@@ -49,17 +55,24 @@ func (m MongodbStore) FindPostsByUserID(ctx context.Context, userID string) ([]e
 	if err != nil {
 		return nil, err
 	}
-	err = cur.All(ctx, &posts)
+	err = cur.All(ctx, &dbModels)
+
+	for i := 0; i < len(dbModels); i++ {
+		posts = append(posts, models.MapToPostEntity(dbModels[i]))
+	}
 	return posts, err
 }
 
 func (m MongodbStore) UpdatePost(ctx context.Context, post entity.Post) error {
 
 	coll := m.db.Collection("posts")
-	post.UpdatedAt = time.Now()
 
-	filter := bson.D{{"_id", post.Id}}
-	_, err := coll.ReplaceOne(ctx, filter, post)
+	dbModel := models.MapFromPostEntity(post)
+
+	dbModel.UpdatedAt = time.Now()
+
+	filter := bson.D{{"_id", dbModel.Id}}
+	_, err := coll.ReplaceOne(ctx, filter, dbModel)
 	return err
 }
 
