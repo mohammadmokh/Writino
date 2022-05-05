@@ -16,11 +16,13 @@ type Post struct {
 	CreatedAt time.Time            `bson:"created_at"`
 	UpdatedAt time.Time            `bson:"updated_at,omitempty"`
 	Likes     []primitive.ObjectID `bson:"likes"`
+	Comments  []primitive.ObjectID `bson:"comments"`
 }
 
 func MapFromPostEntity(post entity.Post) Post {
 
 	var likes []primitive.ObjectID
+	var comments []primitive.ObjectID
 
 	objID, _ := primitive.ObjectIDFromHex(post.Id)
 	autherObjID, _ := primitive.ObjectIDFromHex(post.AuthorID)
@@ -28,6 +30,11 @@ func MapFromPostEntity(post entity.Post) Post {
 	for i := 0; i < len(post.Likes); i++ {
 		likeObjID, _ := primitive.ObjectIDFromHex(post.Likes[i])
 		likes = append(likes, likeObjID)
+	}
+
+	for i := 0; i < len(post.Comments); i++ {
+		commentObjID, _ := primitive.ObjectIDFromHex(post.Comments[i])
+		comments = append(comments, commentObjID)
 	}
 
 	return Post{
@@ -39,15 +46,21 @@ func MapFromPostEntity(post entity.Post) Post {
 		CreatedAt: post.CreatedAt,
 		UpdatedAt: post.UpdatedAt,
 		Likes:     likes,
+		Comments:  comments,
 	}
 }
 
 func MapToPostEntity(post Post) entity.Post {
 
 	var likes []string
+	var comments []string
 
 	for i := 0; i < len(post.Likes); i++ {
 		likes = append(likes, post.Likes[i].Hex())
+	}
+
+	for i := 0; i < len(post.Comments); i++ {
+		comments = append(comments, post.Comments[i].Hex())
 	}
 
 	return entity.Post{
@@ -59,5 +72,6 @@ func MapToPostEntity(post Post) entity.Post {
 		CreatedAt: post.CreatedAt,
 		UpdatedAt: post.UpdatedAt,
 		Likes:     likes,
+		Comments:  comments,
 	}
 }
