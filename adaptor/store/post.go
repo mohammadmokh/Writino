@@ -6,8 +6,10 @@ import (
 
 	"gitlab.com/gocastsian/writino/adaptor/store/models"
 	"gitlab.com/gocastsian/writino/entity"
+	"gitlab.com/gocastsian/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (m MongodbStore) CreatePost(ctx context.Context, post entity.Post) (entity.Post, error) {
@@ -35,6 +37,11 @@ func (m MongodbStore) FindPostByID(ctx context.Context, id string) (entity.Post,
 
 	filter := bson.D{{"_id", objID}}
 	res := coll.FindOne(ctx, filter)
+
+	if res.Err() == mongo.ErrNoDocuments {
+		return entity.Post{}, errors.ErrNotFound
+	}
+
 	err = res.Decode(&post)
 	return models.MapToPostEntity(post), err
 }
@@ -52,10 +59,15 @@ func (m MongodbStore) FindPostsByUserID(ctx context.Context, userID string) ([]e
 	}
 	filter := bson.D{{"author_id", userObjID}}
 	cur, err := coll.Find(ctx, filter)
+
 	if err != nil {
 		return nil, err
 	}
 	err = cur.All(ctx, &dbModels)
+
+	if len(dbModels) == 0 {
+		return nil, errors.ErrNotFound
+	}
 
 	for i := 0; i < len(dbModels); i++ {
 		posts = append(posts, models.MapToPostEntity(dbModels[i]))

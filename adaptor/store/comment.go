@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/gocastsian/writino/adaptor/store/models"
 	"gitlab.com/gocastsian/writino/entity"
+	"gitlab.com/gocastsian/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -65,6 +66,9 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, postID string) (
 	}
 
 	err = cur.All(ctx, &dbModels)
+	if len(dbModels) == 0 {
+		return nil, errors.ErrNotFound
+	}
 
 	for i := 0; i < len(dbModels); i++ {
 		comments = append(comments, models.MapToCommentEntity(dbModels[i]))
