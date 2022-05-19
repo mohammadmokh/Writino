@@ -10,19 +10,19 @@ import (
 )
 
 type AuthInteractor struct {
-	store       contract.AuthStore
-	secret      []byte
-	tokenGen    contract.GenerateTokenPair
-	tokenParser contract.ParseToken
+	store          contract.AuthStore
+	secret         []byte
+	tokenGen       contract.GenerateTokenPair
+	refTokenParser contract.ParseRefToken
 }
 
 func New(store contract.AuthStore, secret []byte,
-	tokenGen contract.GenerateTokenPair, tokenParser contract.ParseToken) contract.AuthInteractor {
+	tokenGen contract.GenerateTokenPair, refTokenParser contract.ParseRefToken) contract.AuthInteractor {
 	return AuthInteractor{
-		store:       store,
-		secret:      secret,
-		tokenGen:    tokenGen,
-		tokenParser: tokenParser,
+		store:          store,
+		secret:         secret,
+		tokenGen:       tokenGen,
+		refTokenParser: refTokenParser,
 	}
 }
 
@@ -40,7 +40,7 @@ func (i AuthInteractor) Login(ctx context.Context, req dto.LoginReq) (dto.LoginR
 		return dto.LoginResponse{}, errors.ErrInvalidCredentials
 	}
 
-	tokenPair, err := i.tokenGen(i.secret, user.Id)
+	tokenPair, err := i.tokenGen(i.secret, user)
 	return dto.LoginResponse{
 		Token:    tokenPair["access_token"],
 		RefToken: tokenPair["refresh_token"],
@@ -49,7 +49,7 @@ func (i AuthInteractor) Login(ctx context.Context, req dto.LoginReq) (dto.LoginR
 
 func (i AuthInteractor) RefreshToken(ctx context.Context, req dto.RefreshReq) (dto.RefreshResponse, error) {
 
-	id, err := i.tokenParser(i.secret, req.RefToken)
+	id, err := i.refTokenParser(i.secret, req.RefToken)
 	if err != nil {
 		return dto.RefreshResponse{}, err
 	}
@@ -61,7 +61,7 @@ func (i AuthInteractor) RefreshToken(ctx context.Context, req dto.RefreshReq) (d
 		return dto.RefreshResponse{}, err
 	}
 
-	tokenPair, err := i.tokenGen(i.secret, user.Id)
+	tokenPair, err := i.tokenGen(i.secret, user)
 	return dto.RefreshResponse{
 		Token:    tokenPair["access_token"],
 		RefToken: tokenPair["refresh_token"],
