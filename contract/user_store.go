@@ -7,8 +7,10 @@ import (
 )
 
 type UserStore interface {
-	CreateUser(context.Context, entity.User) (entity.User, error)
+	CreateUser(context.Context, entity.User) error
 	FindUser(context.Context, string) (entity.User, error)
 	UpdateUser(context.Context, entity.User) error
 	DeleteUser(context.Context, string) error
+	FindUserByEmail(context.Context, string) (entity.User, error)
+	FindUserByUsername(context.Context, string) (entity.User, error)
 }
