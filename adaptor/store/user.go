@@ -19,10 +19,12 @@ func (m MongodbStore) CreateUser(ctx context.Context, user entity.User) error {
 	dbModel.Id = primitive.NewObjectID()
 
 	_, err := coll.InsertOne(ctx, dbModel)
-	if err != nil {
-		return err
+
+	if mongo.IsDuplicateKeyError(err) {
+		return errors.ErrDuplicateRecord
+
 	}
-	return nil
+	return err
 }
 
 func (m MongodbStore) FindUser(ctx context.Context, id string) (entity.User, error) {
@@ -68,7 +70,6 @@ func (m MongodbStore) FindUserByUsername(ctx context.Context, username string) (
 	coll := m.db.Collection("users")
 
 	var user models.User
-
 	filter := bson.D{{"username", username}}
 	res := coll.FindOne(ctx, filter, nil)
 
@@ -87,6 +88,11 @@ func (m MongodbStore) UpdateUser(ctx context.Context, user entity.User) error {
 
 	filter := bson.D{{"_id", dbModel.Id}}
 	_, err := coll.ReplaceOne(ctx, filter, dbModel, nil)
+
+	if mongo.IsDuplicateKeyError(err) {
+		return errors.ErrDuplicateRecord
+	}
+
 	return err
 }
 
