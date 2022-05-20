@@ -36,6 +36,10 @@ func (i AuthInteractor) Login(ctx context.Context, req dto.LoginReq) (dto.LoginR
 		return dto.LoginResponse{}, err
 	}
 
+	if !user.IsVerified {
+		return dto.LoginResponse{}, errors.ErrInvalidCredentials
+	}
+
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)) != nil {
 		return dto.LoginResponse{}, errors.ErrInvalidCredentials
 	}
