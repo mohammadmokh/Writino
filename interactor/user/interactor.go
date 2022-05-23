@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"gitlab.com/gocastsian/writino/contract"
@@ -13,19 +14,17 @@ import (
 )
 
 type UserIntractor struct {
-	store      contract.UserStore
-	mail       contract.EmailService
-	verCodeGen contract.VerificationCodeGen
-	parseTempl contract.ParseVerificationTempl
+	store            contract.UserStore
+	mail             contract.EmailService
+	verificationCode contract.VerificationCodeInteractor
 }
 
-func New(store contract.UserStore, mail contract.EmailService, verCodeGen contract.VerificationCodeGen,
-	parseTempl contract.ParseVerificationTempl) contract.UserInteractor {
+func New(store contract.UserStore, mail contract.EmailService,
+	verificationCode contract.VerificationCodeInteractor) contract.UserInteractor {
 	return UserIntractor{
-		store:      store,
-		mail:       mail,
-		verCodeGen: verCodeGen,
-		parseTempl: parseTempl,
+		store:            store,
+		mail:             mail,
+		verificationCode: verificationCode,
 	}
 }
 
@@ -42,19 +41,14 @@ func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq, valida
 	}
 
 	uuid := strings.Replace(uuid.New().String(), "-", "", -1)
-	verCode, err := i.verCodeGen()
-	if err != nil {
-		return err
-	}
 
 	user := entity.User{
 
-		Email:            req.Email,
-		Password:         string(hashedPassword),
-		Username:         uuid,
-		DisplayName:      req.Email,
-		VerificationCode: verCode,
-		IsVerified:       false,
+		Email:       req.Email,
+		Password:    string(hashedPassword),
+		Username:    uuid,
+		DisplayName: req.Email,
+		IsVerified:  false,
 	}
 
 	err = i.store.CreateUser(ctx, user)
@@ -62,7 +56,7 @@ func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq, valida
 		return err
 	}
 
-	body, err := i.parseTempl(user)
+	body, err := i.verificationCode.Create(ctx, user.Email)
 	if err != nil {
 		return err
 	}
@@ -79,18 +73,29 @@ func (i UserIntractor) CheckUsername(ctx context.Context, req dto.CheckUsernameR
 		}
 		return dto.CheckUsernameRes{}, err
 	}
+
 	return dto.CheckUsernameRes{IsUnique: false}, nil
 }
 
 func (i UserIntractor) CheckEmail(ctx context.Context, req dto.CheckEmailReq) (dto.CheckEmailRes, error) {
 
-	_, err := i.store.FindUserByEmail(ctx, req.Email)
+	user, err := i.store.FindUserByEmail(ctx, req.Email)
 	if err != nil {
 		if err == errors.ErrNotFound {
 			return dto.CheckEmailRes{IsUnique: true}, nil
 		}
 		return dto.CheckEmailRes{}, err
 	}
+
+	// if user registered but not verified we delete the user and free email Address
+	if !user.IsVerified && (time.Since(user.CreatedAt).Minutes() > 5) {
+		err := i.store.DeleteUser(ctx, user.Id)
+		if err != nil {
+			return dto.CheckEmailRes{}, err
+		}
+		return dto.CheckEmailRes{IsUnique: true}, nil
+	}
+
 	return dto.CheckEmailRes{IsUnique: false}, nil
 }
 
@@ -171,20 +176,19 @@ func (i UserIntractor) UpdatePassword(ctx context.Context, req dto.UpdatePasswor
 
 func (i UserIntractor) VerifyUser(ctx context.Context, req dto.VerifyUserReq) error {
 
+	code, err := i.verificationCode.Find(ctx, req.Email)
+	if err != nil {
+		return err
+	}
+	if code != req.VerificationCode {
+		return errors.ErrInvalidCredentials
+	}
+
 	user, err := i.store.FindUserByEmail(ctx, req.Email)
 	if err != nil {
 		return err
 	}
-	if user.VerificationCode != req.VerificationCode {
-		return errors.ErrInvalidCredentials
-	}
-
 	user.IsVerified = true
-	verCode, err := i.verCodeGen()
-	if err != nil {
-		return err
-	}
-	user.VerificationCode = verCode
 
 	err = i.store.UpdateUser(ctx, user)
 	return err

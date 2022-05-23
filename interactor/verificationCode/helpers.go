@@ -1,4 +1,4 @@
-package user
+package verificationCode
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"gitlab.com/gocastsian/writino/entity"
 )
 
-func GenVerCode() (string, error) {
+func Random() (string, error) {
 
 	var max int64 = 1000000
 	var min int64 = 100000
@@ -21,7 +21,7 @@ func GenVerCode() (string, error) {
 	return strconv.FormatInt(n.Int64()+min, 10), err
 }
 
-func ParseVerificationTempl(user entity.User) (string, error) {
+func ParseVerificationTempl(code entity.VerificationCode) (string, error) {
 
 	t := template.New("email_tmpl.html")
 	t, err := t.ParseFiles("./assets/verification_templ/email_tmpl.html")
@@ -30,7 +30,7 @@ func ParseVerificationTempl(user entity.User) (string, error) {
 	}
 
 	var tpl bytes.Buffer
-	if err := t.Execute(&tpl, user); err != nil {
+	if err := t.Execute(&tpl, code); err != nil {
 		return "", err
 	}
 
