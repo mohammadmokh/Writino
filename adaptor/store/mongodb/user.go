@@ -2,8 +2,9 @@ package store
 
 import (
 	"context"
+	"time"
 
-	"gitlab.com/gocastsian/writino/adaptor/store/models"
+	"gitlab.com/gocastsian/writino/adaptor/store/mongodb/models"
 	"gitlab.com/gocastsian/writino/entity"
 	"gitlab.com/gocastsian/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,7 +18,7 @@ func (m MongodbStore) CreateUser(ctx context.Context, user entity.User) error {
 
 	dbModel := models.MapFromUserEntity(user)
 	dbModel.Id = primitive.NewObjectID()
-
+	dbModel.CreatedAt = time.Now()
 	_, err := coll.InsertOne(ctx, dbModel)
 
 	if mongo.IsDuplicateKeyError(err) {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"gitlab.com/gocastsian/writino/adaptor/store/models"
+	"gitlab.com/gocastsian/writino/adaptor/store/mongodb/models"
 	"gitlab.com/gocastsian/writino/entity"
 	"gitlab.com/gocastsian/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
