@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"gitlab.com/gocastsian/writino/entity"
+	"gitlab.com/gocastsian/writino/errors"
 )
 
 func (r RedisStore) CreateVerCode(ctx context.Context, verCode entity.VerificationCode) error {
@@ -15,6 +16,12 @@ func (r RedisStore) CreateVerCode(ctx context.Context, verCode entity.Verificati
 
 func (r RedisStore) FindVerCode(ctx context.Context, email string) (string, error) {
 
-	res := r.client.Get(ctx, email)
-	return res.Result()
+	res, err := r.client.Get(ctx, email).Result()
+	if err != nil {
+		return "", err
+	}
+	if res == "" {
+		return "", errors.ErrNotFound
+	}
+	return res, err
 }
