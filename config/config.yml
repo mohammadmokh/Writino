@@ -1,0 +1,14 @@
+redis:
+  password: 
+  address: 
+  DB: 
+
+mongo:
+  uri: 
+
+email:
+  address: 
+  password: 
+  smtp_host: 
+  smtp_port: 
+
