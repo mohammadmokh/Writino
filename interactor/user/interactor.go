@@ -51,17 +51,18 @@ func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq, valida
 		IsVerified:  false,
 	}
 
-	err = i.store.CreateUser(ctx, user)
-	if err != nil {
-		return err
-	}
-
 	body, err := i.verificationCode.Create(ctx, user.Email)
 	if err != nil {
 		return err
 	}
 	err = i.mail.SendEmail(user.Email, "Verification Code", body)
+	if err != nil {
+		return err
+	}
+
+	err = i.store.CreateUser(ctx, user)
 	return err
+
 }
 
 func (i UserIntractor) CheckUsername(ctx context.Context, req dto.CheckUsernameReq) (dto.CheckUsernameRes, error) {
