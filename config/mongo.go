@@ -1,5 +1,6 @@
 package config
 
 type MongoCfg struct {
-	Uri string
+	DBName string `yaml:"db_name"`
+	Uri    string
 }

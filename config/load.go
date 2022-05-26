@@ -10,6 +10,7 @@ type Config struct {
 	Redis     RedisCfg
 	Email     EmailCfg
 	Mongo     MongoCfg
+	Server    ServerCfg
 	JwtSecret string `yaml:"jwt_secret"`
 }
 

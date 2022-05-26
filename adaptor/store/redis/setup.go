@@ -18,8 +18,9 @@ func New(ctx context.Context, cfg config.RedisCfg) (RedisStore, error) {
 		DB:       0,
 	})
 
-	err := client.Ping(ctx)
+	res := client.Ping(ctx)
+
 	return RedisStore{
 		client: client,
-	}, err.Err()
+	}, res.Err()
 }
