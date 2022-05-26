@@ -28,12 +28,7 @@ func New(store contract.UserStore, mail contract.EmailService,
 	}
 }
 
-func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq, validator contract.ValidateRegisterUser) error {
-
-	err := validator(req)
-	if err != nil {
-		return err
-	}
+func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq) error {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -100,12 +95,7 @@ func (i UserIntractor) CheckEmail(ctx context.Context, req dto.CheckEmailReq) (d
 	return dto.CheckEmailRes{IsUnique: false}, nil
 }
 
-func (i UserIntractor) Update(ctx context.Context, req dto.UpdateUserReq, validator contract.ValidateUpdateUser) error {
-
-	err := validator(req)
-	if err != nil {
-		return err
-	}
+func (i UserIntractor) Update(ctx context.Context, req dto.UpdateUserReq) error {
 
 	user, err := i.store.FindUser(ctx, req.ID)
 	if err != nil {
@@ -149,15 +139,14 @@ func (i UserIntractor) Find(ctx context.Context, req dto.FindUserReq) (dto.FindU
 	}, nil
 }
 
-func (i UserIntractor) UpdatePassword(ctx context.Context, req dto.UpdatePasswordReq,
-	validator contract.ValidateUpdatePassword) error {
+func (i UserIntractor) UpdatePassword(ctx context.Context, req dto.UpdatePasswordReq) error {
 
-	err := validator(req)
+	user, err := i.store.FindUser(ctx, req.ID)
 	if err != nil {
 		return err
 	}
 
-	if req.New != req.Old {
+	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Old)) != nil {
 		return errors.ErrInvalidCredentials
 	}
 
@@ -166,10 +155,6 @@ func (i UserIntractor) UpdatePassword(ctx context.Context, req dto.UpdatePasswor
 		return err
 	}
 
-	user, err := i.store.FindUser(ctx, req.ID)
-	if err != nil {
-		return err
-	}
 	user.Password = string(hashedPassword)
 	err = i.store.UpdateUser(ctx, user)
 	return err
