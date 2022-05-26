@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Redis RedisCfg
-	Email EmailCfg
-	Mongo MongoCfg
+	Redis     RedisCfg
+	Email     EmailCfg
+	Mongo     MongoCfg
+	JwtSecret string `yaml:"jwt_secret"`
 }
 
 func LoadCfg(filename string) (Config, error) {
