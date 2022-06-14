@@ -9,6 +9,7 @@ import (
 	"gitlab.com/gocastsian/writino/config"
 	"gitlab.com/gocastsian/writino/contract"
 	"gitlab.com/gocastsian/writino/interactor/auth"
+	"gitlab.com/gocastsian/writino/interactor/post"
 	"gitlab.com/gocastsian/writino/interactor/user"
 	"gitlab.com/gocastsian/writino/interactor/verificationCode"
 	"gitlab.com/gocastsian/writino/jwt"
@@ -16,10 +17,14 @@ import (
 )
 
 type App struct {
-	JwtSecrete        string
+	JwtSecret         string
 	JwtParser         contract.ParseToken
 	Auth              contract.AuthInteractor
 	User              contract.UserInteractor
+	Post              contract.PostInteractor
+	CreatePostVal     contract.ValidateCreatePost
+	UpdatePostVal     contract.ValidateUpdatePost
+	DeletePostVal     contract.ValidateDeletePost
 	RegisterVal       contract.ValidateRegisterUser
 	UpdateUserVal     contract.ValidateUpdateUser
 	UpdatePasswordVal contract.ValidateUpdatePassword
@@ -41,12 +46,17 @@ func New(cfg config.Config) (App, error) {
 	verficationCode := verificationCode.New(redisClient, verificationCode.Random, verificationCode.ParseVerificationTempl)
 	auth := auth.New(MongoStore, []byte(cfg.JwtSecret), jwt.GenerateTokenPair, jwt.ParseRefToken)
 	user := user.New(MongoStore, mailService, verficationCode)
+	post := post.New(MongoStore)
 
 	return App{
-		JwtSecrete:        cfg.JwtSecret,
+		JwtSecret:         cfg.JwtSecret,
 		JwtParser:         jwt.ParseToken,
 		Auth:              auth,
 		User:              user,
+		Post:              post,
+		CreatePostVal:     validator.ValidateCreatePost,
+		UpdatePostVal:     validator.ValidateUpdatePost,
+		DeletePostVal:     validator.ValidateDeletePost,
 		RegisterVal:       validator.ValidateRegisterUser,
 		UpdateUserVal:     validator.ValidateUpdateUser,
 		UpdatePasswordVal: validator.ValidateUpdatePassword,

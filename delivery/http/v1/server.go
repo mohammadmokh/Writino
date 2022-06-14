@@ -24,7 +24,7 @@ func New(app app.App, cfg config.ServerCfg) Server {
 	e.POST("/users", user.Register(app.User, app.RegisterVal))
 	e.GET("/users/:username", user.Find(app.User))
 	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal),
-		middleware.AuthMiddleware([]byte(app.JwtSecrete), app.JwtParser))
+		middleware.AuthMiddleware([]byte(app.JwtSecret), app.JwtParser))
 	e.DELETE("/users", user.Delete(app.User))
 
 	e.POST("/check/username", user.CheckUsername(app.User))
