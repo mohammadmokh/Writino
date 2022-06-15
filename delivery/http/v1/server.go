@@ -18,20 +18,17 @@ func New(app app.App, cfg config.ServerCfg) Server {
 
 	e := echo.New()
 
+	e.Use(middleware.AuthMiddleware([]byte(app.JwtSecret), app.JwtParser))
+
 	e.POST("/auth/login", auth.Login(app.Auth))
 	e.POST("/auth/refresh", auth.Refresh(app.Auth))
-
 	e.POST("/users", user.Register(app.User, app.RegisterVal))
 	e.GET("/users/:username", user.Find(app.User))
-	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal),
-		middleware.AuthMiddleware([]byte(app.JwtSecrete), app.JwtParser))
+	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal))
 	e.DELETE("/users", user.Delete(app.User))
-
 	e.POST("/check/username", user.CheckUsername(app.User))
 	e.POST("/check/email", user.CheckEmail(app.User))
-
 	e.PATCH("/update/password", user.UpdatePassword(app.User, app.UpdatePasswordVal))
-
 	e.POST("/verify", user.Verify(app.User))
 
 	return Server{
