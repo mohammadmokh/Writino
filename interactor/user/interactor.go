@@ -50,12 +50,12 @@ func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq) error 
 	if err != nil {
 		return err
 	}
-	err = i.mail.SendEmail(user.Email, "Verification Code", body)
+
+	err = i.store.CreateUser(ctx, user)
 	if err != nil {
 		return err
 	}
-
-	err = i.store.CreateUser(ctx, user)
+	err = i.mail.SendEmail(user.Email, "Verification Code", body)
 	return err
 
 }

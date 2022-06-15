@@ -30,6 +30,9 @@ func Register(i contract.UserInteractor, validator contract.ValidateRegisterUser
 		err = i.Register(c.Request().Context(), req)
 
 		if err != nil {
+			if err == errors.ErrNotFound || err == errors.ErrDuplicateRecord {
+				return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+			}
 			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 		}
 
@@ -103,7 +106,7 @@ func Update(i contract.UserInteractor, validator contract.ValidateUpdateUser) ec
 
 		err = i.Update(c.Request().Context(), req)
 		if err != nil {
-			if err == errors.ErrNotFound {
+			if err == errors.ErrNotFound || err == errors.ErrDuplicateRecord {
 				return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 			}
 			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
@@ -163,7 +166,11 @@ func UpdatePassword(i contract.UserInteractor, validator contract.ValidateUpdate
 
 		req := dto.UpdatePasswordReq{}
 
-		user := c.Get(middleware.CtxUserKey).(entity.User)
+		userCtx := c.Get(middleware.CtxUserKey)
+		if userCtx == nil {
+			return c.JSON(http.StatusUnauthorized, echo.Map{"error": errors.ErrInvalidToken.Error()})
+		}
+		user := userCtx.(entity.User)
 		req.ID = user.Id
 
 		err := c.Bind(&req)
