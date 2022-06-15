@@ -6,10 +6,17 @@ import (
 	"gitlab.com/gocastsian/writino/entity"
 )
 
+type SearchPostFilters struct {
+	Query string
+	Limit int
+	Page  int
+}
+
 type PostStore interface {
 	CreatePost(context.Context, entity.Post) (entity.Post, error)
 	FindPostByID(context.Context, string) (entity.Post, error)
-	FindPostsByUserID(context.Context, string) ([]entity.Post, error)
+	FindPostsByUserID(context.Context, SearchPostFilters) ([]entity.Post, error)
 	UpdatePost(context.Context, entity.Post) error
 	DeletePost(context.Context, string) error
+	SearchPost(ctx context.Context, filters SearchPostFilters) ([]entity.Post, error)
 }
