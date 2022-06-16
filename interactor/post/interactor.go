@@ -87,7 +87,16 @@ func (i PostInteractor) FindPostByID(ctx context.Context, req dto.FindPostByIDRe
 
 func (i PostInteractor) DeletePost(ctx context.Context, req dto.DeletePostReq) error {
 
-	err := i.store.DeletePost(ctx, req.ID)
+	post, err := i.store.FindPostByID(ctx, req.ID)
+	if err != nil {
+		return err
+	}
+
+	if post.AuthorID != req.UserID {
+		return errors.ErrNotFound
+	}
+
+	err = i.store.DeletePost(ctx, req.ID)
 	return err
 }
 
@@ -131,7 +140,7 @@ func (i PostInteractor) SearchPost(ctx context.Context, req dto.SearchPostReq) (
 
 func (i PostInteractor) FindUsersPosts(ctx context.Context, req dto.FindUsersPostsReq) (dto.SearchPostRes, error) {
 
-	posts, err := i.store.SearchPost(ctx, contract.SearchPostFilters{
+	posts, err := i.store.FindPostsByUserID(ctx, contract.SearchPostFilters{
 		Query: req.UserID,
 		Limit: req.Limit,
 		Page:  req.Page,

@@ -24,7 +24,6 @@ type App struct {
 	Post              contract.PostInteractor
 	CreatePostVal     contract.ValidateCreatePost
 	UpdatePostVal     contract.ValidateUpdatePost
-	DeletePostVal     contract.ValidateDeletePost
 	RegisterVal       contract.ValidateRegisterUser
 	UpdateUserVal     contract.ValidateUpdateUser
 	UpdatePasswordVal contract.ValidateUpdatePassword
@@ -55,7 +54,6 @@ func New(cfg config.Config) (App, error) {
 		Post:              post,
 		CreatePostVal:     validator.ValidateCreatePost,
 		UpdatePostVal:     validator.ValidateUpdatePost,
-		DeletePostVal:     validator.ValidateDeletePost,
 		RegisterVal:       validator.ValidateRegisterUser,
 		UpdateUserVal:     validator.ValidateUpdateUser,
 		UpdatePasswordVal: validator.ValidateUpdatePassword,

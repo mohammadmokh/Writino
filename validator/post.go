@@ -1,10 +1,7 @@
 package validator
 
 import (
-	"context"
-
 	validation "github.com/go-ozzo/ozzo-validation"
-	"gitlab.com/gocastsian/writino/contract"
 	"gitlab.com/gocastsian/writino/dto"
 )
 
@@ -23,8 +20,4 @@ func ValidateUpdatePost(req dto.UpdatePostReq) error {
 		validation.Field(&req.Tags, validation.Length(0, 3), validation.Each(validation.Length(3, 20))),
 		validation.Field(&req.AuthorID, validation.Required),
 	)
-}
-
-func ValidateDeletePost(ctx context.Context, req dto.DeletePostReq, store contract.PostStore) error {
-	return validation.Validate(req, validation.By(deletePost(ctx, store)))
 }
