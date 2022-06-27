@@ -55,7 +55,7 @@ type SummaryPostRes struct {
 	ID          string    `json:"-"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	Author      string    `json:"author,omitempty"`
+	Author      string    `json:"author"`
 	CreatedAt   time.Time `json:"created_at"`
 	Link        string    `json:"link"`
 }

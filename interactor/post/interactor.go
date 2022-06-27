@@ -166,6 +166,7 @@ func (i PostInteractor) FindUsersPosts(ctx context.Context, req dto.FindUsersPos
 			ID:          posts[i].Id,
 			Title:       posts[i].Title,
 			Description: description,
+			Author:      posts[i].AuthorID,
 			CreatedAt:   posts[i].CreatedAt,
 		}
 
