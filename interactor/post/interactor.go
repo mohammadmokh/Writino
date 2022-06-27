@@ -48,7 +48,7 @@ func (i PostInteractor) UpdatePost(ctx context.Context, req dto.UpdatePostReq) e
 		post.Content = *req.Content
 	}
 	if req.Tags != nil {
-		post.Tags = *req.Tags
+		post.Tags = req.Tags
 	}
 	if req.Title != nil {
 		post.Title = *req.Title

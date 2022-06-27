@@ -16,11 +16,11 @@ type CreatePostRes struct {
 }
 
 type UpdatePostReq struct {
-	AuthorID string    `json:"-"`
-	Id       string    `json:"id"`
-	Title    *string   `json:"title"`
-	Content  *string   `json:"content"`
-	Tags     *[]string `json:"tags"`
+	AuthorID string   `json:"-"`
+	Id       string   `json:"id"`
+	Title    *string  `json:"title"`
+	Content  *string  `json:"content"`
+	Tags     []string `json:"tags"`
 }
 
 type FindPostByIDReq struct {
