@@ -33,12 +33,13 @@ func New(app app.App, cfg config.ServerCfg) Server {
 	e.PATCH("/update/password", user.UpdatePassword(app.User, app.UpdatePasswordVal))
 	e.POST("/verify", user.Verify(app.User))
 
-	e.POST("posts", post.CreatePost(app.Post, app.CreatePostVal, cfg))
-	e.GET("posts/:id", post.FindPostByID(app.Post, cfg))
-	e.PATCH("posts/:id", post.UpdatePost(app.Post, app.UpdatePostVal))
-	e.DELETE("posts/:id", post.Delete(app.Post))
-	e.GET("posts/search", post.SearchPost(app.Post, cfg))
+	e.POST("/posts", post.CreatePost(app.Post, app.CreatePostVal, cfg))
+	e.GET("/posts/:id", post.FindPostByID(app.Post, cfg))
+	e.PATCH("/posts/:id", post.UpdatePost(app.Post, app.UpdatePostVal))
+	e.DELETE("/posts/:id", post.Delete(app.Post))
+	e.GET("/posts/search", post.SearchPost(app.Post, cfg))
 	e.GET("/users/:id/posts", post.FindUsersPosts(app.Post, cfg))
+	e.GET("/posts", post.FindAll(app.Post, cfg))
 
 	return Server{
 		server: e,

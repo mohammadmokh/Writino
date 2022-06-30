@@ -147,3 +147,44 @@ func (m MongodbStore) SearchPost(ctx context.Context, filters contract.SearchPos
 	}
 	return posts, err
 }
+
+func (m MongodbStore) FindAll(ctx context.Context, filters contract.SearchPostFilters) ([]entity.Post, error) {
+
+	coll := m.db.Collection("posts")
+
+	var dbModels []models.Post
+	var posts []entity.Post
+
+	limit := int64(filters.Limit)
+	skip := int64(filters.Page*filters.Limit - filters.Limit)
+	fOpts := options.FindOptions{
+		Limit: &limit,
+		Skip:  &skip,
+	}
+
+	switch filters.Query {
+
+	case "newest":
+		fOpts.SetSort(bson.D{{"created_at", -1}})
+
+	case "oldest":
+		fOpts.SetSort(bson.D{{"created_at", 1}})
+	}
+
+	cur, err := coll.Find(ctx, bson.D{{}}, &fOpts)
+
+	if err != nil {
+		return nil, err
+	}
+	err = cur.All(ctx, &dbModels)
+
+	if len(dbModels) == 0 {
+		return nil, errors.ErrNotFound
+	}
+
+	for i := 0; i < len(dbModels); i++ {
+		posts = append(posts, models.MapToPostEntity(dbModels[i]))
+	}
+	return posts, err
+
+}

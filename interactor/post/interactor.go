@@ -175,3 +175,42 @@ func (i PostInteractor) FindUsersPosts(ctx context.Context, req dto.FindUsersPos
 
 	return res, nil
 }
+
+func (i PostInteractor) FindAll(ctx context.Context, req dto.SearchPostReq) (dto.SearchPostRes, error) {
+
+	posts, err := i.store.FindAll(ctx, contract.SearchPostFilters{
+		Query: req.Query,
+		Limit: req.Limit,
+		Page:  req.Page,
+	})
+
+	if err != nil {
+		return dto.SearchPostRes{}, err
+	}
+
+	res := dto.SearchPostRes{
+		TotalCount: len(posts),
+	}
+
+	for i := 0; i < len(posts); i++ {
+
+		var description string
+		if len(posts[i].Content) < 30 {
+			description = posts[i].Content[:len(posts[i].Content)]
+		} else {
+			description = posts[i].Content[:30]
+		}
+		summary := dto.SummaryPostRes{
+			ID:          posts[i].Id,
+			Title:       posts[i].Title,
+			Description: description,
+			Author:      posts[i].AuthorID,
+			CreatedAt:   posts[i].CreatedAt,
+		}
+
+		res.Posts = append(res.Posts, summary)
+	}
+
+	return res, nil
+
+}

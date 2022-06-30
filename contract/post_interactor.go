@@ -13,4 +13,5 @@ type PostInteractor interface {
 	DeletePost(context.Context, dto.DeletePostReq) error
 	SearchPost(context.Context, dto.SearchPostReq) (dto.SearchPostRes, error)
 	FindUsersPosts(context.Context, dto.FindUsersPostsReq) (dto.SearchPostRes, error)
+	FindAll(context.Context, dto.SearchPostReq) (dto.SearchPostRes, error)
 }

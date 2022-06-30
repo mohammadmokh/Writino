@@ -215,3 +215,52 @@ func Delete(i contract.PostInteractor) echo.HandlerFunc {
 		return c.JSON(http.StatusOK, echo.Map{"msg": "post deleted"})
 	}
 }
+
+func FindAll(i contract.PostInteractor, cfg config.ServerCfg) echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		var err error
+		req := dto.SearchPostReq{}
+
+		// set default values for pagination
+		if len(c.QueryParam("limit")) == 0 {
+			req.Limit = 5
+		} else {
+			req.Limit, err = strconv.Atoi(c.QueryParam("limit"))
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+			}
+		}
+
+		if len(c.QueryParam("page")) == 0 {
+			req.Page = 1
+		} else {
+			req.Page, err = strconv.Atoi(c.QueryParam("page"))
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+			}
+		}
+
+		if len(c.QueryParam("query")) == 0 {
+			req.Query = "newest"
+		} else {
+			req.Query = c.QueryParam("query")
+		}
+
+		posts, err := i.FindAll(c.Request().Context(), req)
+		if err != nil {
+			if err == errors.ErrNotFound {
+				return c.JSON(http.StatusOK, posts)
+			}
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+
+		for i := 0; i < len(posts.Posts); i++ {
+			// send link of resources
+			posts.Posts[i].Author = cfg.Address + "/users/" + posts.Posts[i].Author
+			posts.Posts[i].Link = cfg.Address + "/posts/" + posts.Posts[i].ID
+		}
+
+		return c.JSON(http.StatusOK, posts)
+	}
+}
