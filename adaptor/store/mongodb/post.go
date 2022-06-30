@@ -48,7 +48,8 @@ func (m MongodbStore) FindPostByID(ctx context.Context, id string) (entity.Post,
 	return models.MapToPostEntity(post), err
 }
 
-func (m MongodbStore) FindPostsByUserID(ctx context.Context, filters contract.SearchPostFilters) ([]entity.Post, error) {
+func (m MongodbStore) FindPostsByUserID(ctx context.Context, filters contract.SearchPostFilters) (
+	contract.SearchPostRes, error) {
 
 	coll := m.db.Collection("posts")
 
@@ -57,7 +58,7 @@ func (m MongodbStore) FindPostsByUserID(ctx context.Context, filters contract.Se
 
 	userObjID, err := primitive.ObjectIDFromHex(filters.Query)
 	if err != nil {
-		return nil, err
+		return contract.SearchPostRes{}, err
 	}
 
 	limit := int64(filters.Limit)
@@ -67,21 +68,29 @@ func (m MongodbStore) FindPostsByUserID(ctx context.Context, filters contract.Se
 		Skip:  &skip,
 	}
 	filter := bson.D{{"author_id", userObjID}}
+
+	count, err := coll.CountDocuments(ctx, filter)
+	if err != nil {
+		return contract.SearchPostRes{}, err
+	}
+	if count == 0 {
+		return contract.SearchPostRes{}, errors.ErrNotFound
+	}
+
 	cur, err := coll.Find(ctx, filter, &fOpts)
 
 	if err != nil {
-		return nil, err
+		return contract.SearchPostRes{}, err
 	}
 	err = cur.All(ctx, &dbModels)
-
-	if len(dbModels) == 0 {
-		return nil, errors.ErrNotFound
-	}
 
 	for i := 0; i < len(dbModels); i++ {
 		posts = append(posts, models.MapToPostEntity(dbModels[i]))
 	}
-	return posts, err
+	return contract.SearchPostRes{
+		Posts: posts,
+		Count: int(count),
+	}, err
 }
 
 func (m MongodbStore) UpdatePost(ctx context.Context, post entity.Post) error {
@@ -112,7 +121,7 @@ func (m MongodbStore) DeletePost(ctx context.Context, id string) error {
 	return err
 }
 
-func (m MongodbStore) SearchPost(ctx context.Context, filters contract.SearchPostFilters) ([]entity.Post, error) {
+func (m MongodbStore) SearchPost(ctx context.Context, filters contract.SearchPostFilters) (contract.SearchPostRes, error) {
 
 	coll := m.db.Collection("posts")
 
@@ -131,24 +140,32 @@ func (m MongodbStore) SearchPost(ctx context.Context, filters contract.SearchPos
 		},
 	}
 
+	count, err := coll.CountDocuments(ctx, filter)
+	if err != nil {
+		return contract.SearchPostRes{}, err
+	}
+	if count == 0 {
+		return contract.SearchPostRes{}, errors.ErrNotFound
+	}
+
 	cur, err := coll.Find(ctx, filter, &fOpts)
 
 	if err != nil {
-		return nil, err
+		return contract.SearchPostRes{}, err
 	}
 	err = cur.All(ctx, &dbModels)
-
-	if len(dbModels) == 0 {
-		return nil, errors.ErrNotFound
-	}
 
 	for i := 0; i < len(dbModels); i++ {
 		posts = append(posts, models.MapToPostEntity(dbModels[i]))
 	}
-	return posts, err
+
+	return contract.SearchPostRes{
+		Posts: posts,
+		Count: int(count),
+	}, err
 }
 
-func (m MongodbStore) FindAll(ctx context.Context, filters contract.SearchPostFilters) ([]entity.Post, error) {
+func (m MongodbStore) FindAll(ctx context.Context, filters contract.SearchPostFilters) (contract.SearchPostRes, error) {
 
 	coll := m.db.Collection("posts")
 
@@ -171,20 +188,31 @@ func (m MongodbStore) FindAll(ctx context.Context, filters contract.SearchPostFi
 		fOpts.SetSort(bson.D{{"created_at", 1}})
 	}
 
+	count, err := coll.CountDocuments(ctx, bson.D{{}})
+	if err != nil {
+		return contract.SearchPostRes{}, err
+	}
+	if count == 0 {
+		return contract.SearchPostRes{}, errors.ErrNotFound
+	}
+
 	cur, err := coll.Find(ctx, bson.D{{}}, &fOpts)
 
 	if err != nil {
-		return nil, err
+		return contract.SearchPostRes{}, err
 	}
 	err = cur.All(ctx, &dbModels)
 
 	if len(dbModels) == 0 {
-		return nil, errors.ErrNotFound
+		return contract.SearchPostRes{}, errors.ErrNotFound
 	}
 
 	for i := 0; i < len(dbModels); i++ {
 		posts = append(posts, models.MapToPostEntity(dbModels[i]))
 	}
-	return posts, err
+	return contract.SearchPostRes{
+		Posts: posts,
+		Count: int(count),
+	}, err
 
 }

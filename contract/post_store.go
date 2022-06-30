@@ -12,11 +12,17 @@ type SearchPostFilters struct {
 	Page  int
 }
 
+type SearchPostRes struct {
+	Count int
+	Posts []entity.Post
+}
+
 type PostStore interface {
 	CreatePost(context.Context, entity.Post) (entity.Post, error)
 	FindPostByID(context.Context, string) (entity.Post, error)
-	FindPostsByUserID(context.Context, SearchPostFilters) ([]entity.Post, error)
+	FindPostsByUserID(context.Context, SearchPostFilters) (SearchPostRes, error)
 	UpdatePost(context.Context, entity.Post) error
 	DeletePost(context.Context, string) error
-	SearchPost(ctx context.Context, filters SearchPostFilters) ([]entity.Post, error)
+	SearchPost(ctx context.Context, filters SearchPostFilters) (SearchPostRes, error)
+	FindAll(context.Context, SearchPostFilters) (SearchPostRes, error)
 }

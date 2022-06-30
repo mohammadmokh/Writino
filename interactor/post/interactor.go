@@ -102,7 +102,7 @@ func (i PostInteractor) DeletePost(ctx context.Context, req dto.DeletePostReq) e
 
 func (i PostInteractor) SearchPost(ctx context.Context, req dto.SearchPostReq) (dto.SearchPostRes, error) {
 
-	posts, err := i.store.SearchPost(ctx, contract.SearchPostFilters{
+	searchRes, err := i.store.SearchPost(ctx, contract.SearchPostFilters{
 		Query: req.Query,
 		Limit: req.Limit,
 		Page:  req.Page,
@@ -113,23 +113,23 @@ func (i PostInteractor) SearchPost(ctx context.Context, req dto.SearchPostReq) (
 	}
 
 	res := dto.SearchPostRes{
-		TotalCount: len(posts),
+		TotalCount: searchRes.Count,
 	}
 
-	for i := 0; i < len(posts); i++ {
+	for i := 0; i < len(searchRes.Posts); i++ {
 
 		var description string
-		if len(posts[i].Content) < 30 {
-			description = posts[i].Content[:len(posts[i].Content)]
+		if len(searchRes.Posts[i].Content) < 30 {
+			description = searchRes.Posts[i].Content[:len(searchRes.Posts[i].Content)]
 		} else {
-			description = posts[i].Content[:30]
+			description = searchRes.Posts[i].Content[:30]
 		}
 		summary := dto.SummaryPostRes{
-			ID:          posts[i].Id,
-			Title:       posts[i].Title,
+			ID:          searchRes.Posts[i].Id,
+			Title:       searchRes.Posts[i].Title,
 			Description: description,
-			Author:      posts[i].AuthorID,
-			CreatedAt:   posts[i].CreatedAt,
+			Author:      searchRes.Posts[i].AuthorID,
+			CreatedAt:   searchRes.Posts[i].CreatedAt,
 		}
 
 		res.Posts = append(res.Posts, summary)
@@ -140,7 +140,7 @@ func (i PostInteractor) SearchPost(ctx context.Context, req dto.SearchPostReq) (
 
 func (i PostInteractor) FindUsersPosts(ctx context.Context, req dto.FindUsersPostsReq) (dto.SearchPostRes, error) {
 
-	posts, err := i.store.FindPostsByUserID(ctx, contract.SearchPostFilters{
+	findRes, err := i.store.FindPostsByUserID(ctx, contract.SearchPostFilters{
 		Query: req.UserID,
 		Limit: req.Limit,
 		Page:  req.Page,
@@ -151,23 +151,23 @@ func (i PostInteractor) FindUsersPosts(ctx context.Context, req dto.FindUsersPos
 	}
 
 	res := dto.SearchPostRes{
-		TotalCount: len(posts),
+		TotalCount: findRes.Count,
 	}
 
-	for i := 0; i < len(posts); i++ {
+	for i := 0; i < len(findRes.Posts); i++ {
 
 		var description string
-		if len(posts[i].Content) < 30 {
-			description = posts[i].Content[:len(posts[i].Content)]
+		if len(findRes.Posts[i].Content) < 30 {
+			description = findRes.Posts[i].Content[:len(findRes.Posts[i].Content)]
 		} else {
-			description = posts[i].Content[:30]
+			description = findRes.Posts[i].Content[:30]
 		}
 		summary := dto.SummaryPostRes{
-			ID:          posts[i].Id,
-			Title:       posts[i].Title,
+			ID:          findRes.Posts[i].Id,
+			Title:       findRes.Posts[i].Title,
 			Description: description,
-			Author:      posts[i].AuthorID,
-			CreatedAt:   posts[i].CreatedAt,
+			Author:      findRes.Posts[i].AuthorID,
+			CreatedAt:   findRes.Posts[i].CreatedAt,
 		}
 
 		res.Posts = append(res.Posts, summary)
@@ -178,7 +178,7 @@ func (i PostInteractor) FindUsersPosts(ctx context.Context, req dto.FindUsersPos
 
 func (i PostInteractor) FindAll(ctx context.Context, req dto.SearchPostReq) (dto.SearchPostRes, error) {
 
-	posts, err := i.store.FindAll(ctx, contract.SearchPostFilters{
+	findRes, err := i.store.FindAll(ctx, contract.SearchPostFilters{
 		Query: req.Query,
 		Limit: req.Limit,
 		Page:  req.Page,
@@ -189,23 +189,23 @@ func (i PostInteractor) FindAll(ctx context.Context, req dto.SearchPostReq) (dto
 	}
 
 	res := dto.SearchPostRes{
-		TotalCount: len(posts),
+		TotalCount: findRes.Count,
 	}
 
-	for i := 0; i < len(posts); i++ {
+	for i := 0; i < len(findRes.Posts); i++ {
 
 		var description string
-		if len(posts[i].Content) < 30 {
-			description = posts[i].Content[:len(posts[i].Content)]
+		if len(findRes.Posts[i].Content) < 30 {
+			description = findRes.Posts[i].Content[:len(findRes.Posts[i].Content)]
 		} else {
-			description = posts[i].Content[:30]
+			description = findRes.Posts[i].Content[:30]
 		}
 		summary := dto.SummaryPostRes{
-			ID:          posts[i].Id,
-			Title:       posts[i].Title,
+			ID:          findRes.Posts[i].Id,
+			Title:       findRes.Posts[i].Title,
 			Description: description,
-			Author:      posts[i].AuthorID,
-			CreatedAt:   posts[i].CreatedAt,
+			Author:      findRes.Posts[i].AuthorID,
+			CreatedAt:   findRes.Posts[i].CreatedAt,
 		}
 
 		res.Posts = append(res.Posts, summary)
