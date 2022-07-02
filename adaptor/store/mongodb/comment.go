@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"gitlab.com/gocastsian/writino/adaptor/store/mongodb/models"
+	"gitlab.com/gocastsian/writino/contract"
 	"gitlab.com/gocastsian/writino/entity"
 	"gitlab.com/gocastsian/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,7 +35,8 @@ func (m MongodbStore) CreateComment(ctx context.Context, comment entity.Comment,
 	return err
 }
 
-func (m MongodbStore) FindCommentsByPostID(ctx context.Context, postID string) ([]entity.Comment, error) {
+func (m MongodbStore) FindCommentsByPostID(ctx context.Context, filters contract.FindCommentfilters) (
+	contract.FindCommentRes, error) {
 
 	coll := m.db.Collection("posts")
 
@@ -46,9 +48,9 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, postID string) (
 	var dbModels []models.Comment
 	var comments []entity.Comment
 
-	postObjID, err := primitive.ObjectIDFromHex(postID)
+	postObjID, err := primitive.ObjectIDFromHex(filters.PostID)
 	if err != nil {
-		return nil, err
+		return contract.FindCommentRes{}, err
 	}
 	filter := bson.D{{"_id", postObjID}}
 	opts := options.FindOne().SetProjection(bson.D{{"comments", 1}, {"_id", 0}})
@@ -56,23 +58,36 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, postID string) (
 
 	err = res.Decode(&commentIDs)
 	if err != nil {
-		return nil, err
+		return contract.FindCommentRes{}, err
 	}
 	coll = m.db.Collection("comments")
+	limit := int64(filters.Limit)
+	skip := int64(filters.Page*filters.Limit - filters.Limit)
+	fOpts := options.FindOptions{
+		Limit: &limit,
+		Skip:  &skip,
+	}
 	filter = bson.D{{"_id", bson.D{{"$in", commentIDs.Comments}}}}
-	cur, err := coll.Find(ctx, filter)
+	cur, err := coll.Find(ctx, filter, &fOpts)
 	if err != nil {
-		return nil, err
+		return contract.FindCommentRes{}, err
+	}
+	count, err := coll.CountDocuments(ctx, bson.D{{}})
+	if err != nil {
+		return contract.FindCommentRes{}, err
+	}
+	if count == 0 {
+		return contract.FindCommentRes{}, errors.ErrNotFound
 	}
 
 	err = cur.All(ctx, &dbModels)
-	if len(dbModels) == 0 {
-		return nil, errors.ErrNotFound
-	}
 
 	for i := 0; i < len(dbModels); i++ {
 		comments = append(comments, models.MapToCommentEntity(dbModels[i]))
 	}
 
-	return comments, err
+	return contract.FindCommentRes{
+		Comments:   comments,
+		TotalCount: int(count),
+	}, err
 }
