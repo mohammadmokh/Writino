@@ -25,4 +25,5 @@ type PostStore interface {
 	DeletePost(context.Context, string) error
 	SearchPost(ctx context.Context, filters SearchPostFilters) (SearchPostRes, error)
 	FindAll(context.Context, SearchPostFilters) (SearchPostRes, error)
+	LikePost(ctx context.Context, postID string, userID string) error
 }

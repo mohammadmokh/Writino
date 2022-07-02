@@ -214,3 +214,9 @@ func (i PostInteractor) FindAll(ctx context.Context, req dto.SearchPostReq) (dto
 	return res, nil
 
 }
+
+func (i PostInteractor) LikePost(ctx context.Context, req dto.LikePostReq) error {
+
+	err := i.store.LikePost(ctx, req.PostID, req.UserID)
+	return err
+}

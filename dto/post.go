@@ -70,3 +70,8 @@ type FindUsersPostsReq struct {
 	Limit  int
 	Page   int
 }
+
+type LikePostReq struct {
+	UserID string
+	PostID string
+}

@@ -40,6 +40,8 @@ func New(app app.App, cfg config.ServerCfg) Server {
 	e.GET("/posts/search", post.SearchPost(app.Post, cfg))
 	e.GET("/users/:id/posts", post.FindUsersPosts(app.Post, cfg))
 	e.GET("/posts", post.FindAll(app.Post, cfg))
+	e.GET("/posts", post.FindAll(app.Post, cfg))
+	e.PUT("/posts/:id/like", post.LikePost(app.Post))
 
 	return Server{
 		server: e,

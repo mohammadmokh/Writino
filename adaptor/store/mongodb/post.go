@@ -216,3 +216,30 @@ func (m MongodbStore) FindAll(ctx context.Context, filters contract.SearchPostFi
 	}, err
 
 }
+
+func (m MongodbStore) LikePost(ctx context.Context, postID string, userID string) error {
+
+	coll := m.db.Collection("posts")
+
+	postObjID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return err
+	}
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": postObjID}
+	res, err := coll.UpdateOne(ctx, filter, bson.M{"$push": bson.M{"likes": userObjID}})
+	if err != nil {
+		return err
+	}
+
+	if res.MatchedCount == 0 {
+		return errors.ErrNotFound
+	}
+
+	return nil
+
+}

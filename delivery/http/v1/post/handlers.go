@@ -264,3 +264,27 @@ func FindAll(i contract.PostInteractor, cfg config.ServerCfg) echo.HandlerFunc {
 		return c.JSON(http.StatusOK, posts)
 	}
 }
+
+func LikePost(i contract.PostInteractor) echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		req := dto.LikePostReq{}
+		req.PostID = c.Param("id")
+		userCtx := c.Get(middleware.CtxUserKey)
+		if userCtx == nil {
+			return c.JSON(http.StatusUnauthorized, echo.Map{"error": errors.ErrInvalidToken.Error()})
+		}
+		user := userCtx.(entity.User)
+		req.UserID = user.Id
+
+		err := i.LikePost(c.Request().Context(), req)
+		if err != nil {
+			if err == errors.ErrNotFound {
+				return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+			}
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+
+		return c.JSON(http.StatusOK, echo.Map{"msg": "post liked"})
+	}
+}

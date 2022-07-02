@@ -15,7 +15,7 @@ type Post struct {
 	Tags      []string             `bson:"tags"`
 	CreatedAt time.Time            `bson:"created_at"`
 	UpdatedAt time.Time            `bson:"updated_at,omitempty"`
-	Likes     []primitive.ObjectID `bson:"likes"`
+	Likes     []primitive.ObjectID `bson:"likes,omitempty"`
 	Comments  []primitive.ObjectID `bson:"comments"`
 }
 
