@@ -9,6 +9,7 @@ import (
 	"gitlab.com/gocastsian/writino/config"
 	"gitlab.com/gocastsian/writino/contract"
 	"gitlab.com/gocastsian/writino/interactor/auth"
+	"gitlab.com/gocastsian/writino/interactor/comment"
 	"gitlab.com/gocastsian/writino/interactor/post"
 	"gitlab.com/gocastsian/writino/interactor/user"
 	"gitlab.com/gocastsian/writino/interactor/verificationCode"
@@ -22,6 +23,7 @@ type App struct {
 	Auth              contract.AuthInteractor
 	User              contract.UserInteractor
 	Post              contract.PostInteractor
+	Comment           contract.CommentInteractor
 	CreatePostVal     contract.ValidateCreatePost
 	UpdatePostVal     contract.ValidateUpdatePost
 	RegisterVal       contract.ValidateRegisterUser
@@ -45,6 +47,7 @@ func New(cfg config.Config) (App, error) {
 	auth := auth.New(MongoStore, []byte(cfg.JwtSecret), jwt.GenerateTokenPair, jwt.ParseRefToken)
 	user := user.New(MongoStore, mailService, verficationCode)
 	post := post.New(MongoStore)
+	comment := comment.New(MongoStore)
 
 	return App{
 		JwtSecret:         cfg.JwtSecret,
@@ -52,6 +55,7 @@ func New(cfg config.Config) (App, error) {
 		Auth:              auth,
 		User:              user,
 		Post:              post,
+		Comment:           comment,
 		CreatePostVal:     validator.ValidateCreatePost,
 		UpdatePostVal:     validator.ValidateUpdatePost,
 		RegisterVal:       validator.ValidateRegisterUser,

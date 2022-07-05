@@ -5,6 +5,7 @@ import (
 	"gitlab.com/gocastsian/writino/app"
 	"gitlab.com/gocastsian/writino/config"
 	"gitlab.com/gocastsian/writino/delivery/http/v1/auth"
+	"gitlab.com/gocastsian/writino/delivery/http/v1/comment"
 	"gitlab.com/gocastsian/writino/delivery/http/v1/middleware"
 	"gitlab.com/gocastsian/writino/delivery/http/v1/post"
 	"gitlab.com/gocastsian/writino/delivery/http/v1/user"
@@ -42,6 +43,9 @@ func New(app app.App, cfg config.ServerCfg) Server {
 	e.GET("/posts", post.FindAll(app.Post, cfg))
 	e.GET("/posts", post.FindAll(app.Post, cfg))
 	e.PUT("/posts/:id/like", post.LikePost(app.Post))
+
+	e.POST("/posts/:id/comments", comment.CreateComment(app.Comment))
+	e.GET("/posts/:id/comments", comment.FindCommentsByPostID(app.Comment, cfg))
 
 	return Server{
 		server: e,
