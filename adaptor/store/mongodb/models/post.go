@@ -16,7 +16,7 @@ type Post struct {
 	CreatedAt time.Time            `bson:"created_at"`
 	UpdatedAt time.Time            `bson:"updated_at,omitempty"`
 	Likes     []primitive.ObjectID `bson:"likes,omitempty"`
-	Comments  []primitive.ObjectID `bson:"comments"`
+	Comments  []primitive.ObjectID `bson:"comments,omitempty"`
 }
 
 func MapFromPostEntity(post entity.Post) Post {

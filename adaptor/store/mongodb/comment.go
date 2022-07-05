@@ -9,29 +9,32 @@ import (
 	"gitlab.com/gocastsian/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (m MongodbStore) CreateComment(ctx context.Context, comment entity.Comment, postID string) error {
 
-	coll := m.db.Collection("comments")
+	coll := m.db.Collection("posts")
 
 	dbModel := models.MapFromCommentEntity(comment)
-
 	dbModel.Id = primitive.NewObjectID()
-	_, err := coll.InsertOne(ctx, dbModel)
-	if err != nil {
-		return err
-	}
-
-	coll = m.db.Collection("posts")
 	postObjID, err := primitive.ObjectIDFromHex(postID)
 	if err != nil {
 		return err
 	}
 	filter := bson.D{{"_id", postObjID}}
 	update := bson.D{{"$push", bson.D{{"comments", dbModel.Id}}}}
-	_, err = coll.UpdateOne(ctx, filter, update)
+	res, err := coll.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return errors.ErrNotFound
+	}
+
+	coll = m.db.Collection("comments")
+	_, err = coll.InsertOne(ctx, dbModel)
 	return err
 }
 
@@ -44,7 +47,7 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, filters contract
 		Comments []primitive.ObjectID `bson:"comments"`
 	}
 
-	var commentIDs commentID
+	commentIDs := commentID{Comments: []primitive.ObjectID{}}
 	var dbModels []models.Comment
 	var comments []entity.Comment
 
@@ -58,6 +61,9 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, filters contract
 
 	err = res.Decode(&commentIDs)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return contract.FindCommentRes{}, errors.ErrNotFound
+		}
 		return contract.FindCommentRes{}, err
 	}
 	coll = m.db.Collection("comments")
@@ -72,7 +78,7 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, filters contract
 	if err != nil {
 		return contract.FindCommentRes{}, err
 	}
-	count, err := coll.CountDocuments(ctx, bson.D{{}})
+	count, err := coll.CountDocuments(ctx, filter)
 	if err != nil {
 		return contract.FindCommentRes{}, err
 	}
