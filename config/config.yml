@@ -1,18 +1,21 @@
-jwt_secret: secret
+jwt_secret:
 redis:
-  password: password
-  address: localhost:6379
-  DB: 0
+  password: 
+  address: 
+  DB: 
 
 mongo:
-  db_name: db_name
-  uri: mongodb://localhost:27017
+  db_name: 
+  uri: 
 
 email:
-  address: user@example.com
-  password: password
-  smtp_host: example.com
-  smtp_port: 587
+  address: 
+  password: 
+  smtp_host:
+  smtp_port:
 
 server:
-  address: localhost:8080
+  address:
+
+imagefs:
+  path: 

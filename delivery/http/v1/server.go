@@ -26,13 +26,14 @@ func New(app app.App, cfg config.ServerCfg) Server {
 	e.POST("/auth/refresh", auth.Refresh(app.Auth))
 
 	e.POST("/users", user.Register(app.User, app.RegisterVal))
-	e.GET("/users/:username", user.Find(app.User))
+	e.GET("/users/:username", user.Find(app.User, cfg))
 	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal))
 	e.DELETE("/users", user.Delete(app.User))
 	e.POST("/check/username", user.CheckUsername(app.User))
 	e.POST("/check/email", user.CheckEmail(app.User))
 	e.PATCH("/update/password", user.UpdatePassword(app.User, app.UpdatePasswordVal))
 	e.POST("/verify", user.Verify(app.User))
+	e.PATCH("/update/avatar", user.UpdateAvatar(app.User, cfg))
 
 	e.POST("/posts", post.CreatePost(app.Post, app.CreatePostVal, cfg))
 	e.GET("/posts/:id", post.FindPostByID(app.Post, cfg))
@@ -46,6 +47,8 @@ func New(app app.App, cfg config.ServerCfg) Server {
 
 	e.POST("/posts/:id/comments", comment.CreateComment(app.Comment))
 	e.GET("/posts/:id/comments", comment.FindCommentsByPostID(app.Comment, cfg))
+
+	e.Static("/images", "img")
 
 	return Server{
 		server: e,

@@ -11,6 +11,7 @@ type Config struct {
 	Email     EmailCfg
 	Mongo     MongoCfg
 	Server    ServerCfg
+	ImageFs   FsCfg
 	JwtSecret string `yaml:"jwt_secret"`
 }
 

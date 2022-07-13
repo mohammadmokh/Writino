@@ -1,9 +1,12 @@
 package user
 
 import (
+	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"gitlab.com/gocastsian/writino/config"
 	"gitlab.com/gocastsian/writino/contract"
 	"gitlab.com/gocastsian/writino/delivery/http/v1/middleware"
 	"gitlab.com/gocastsian/writino/dto"
@@ -139,7 +142,7 @@ func Delete(i contract.UserInteractor) echo.HandlerFunc {
 	}
 }
 
-func Find(i contract.UserInteractor) echo.HandlerFunc {
+func Find(i contract.UserInteractor, cfg config.ServerCfg) echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 
@@ -155,7 +158,9 @@ func Find(i contract.UserInteractor) echo.HandlerFunc {
 			}
 			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 		}
-
+		if res.ProfilePic != "" {
+			res.ProfilePic = cfg.Address + "/images/avatars/" + res.ProfilePic
+		}
 		return c.JSON(http.StatusOK, res)
 	}
 }
@@ -213,5 +218,53 @@ func Verify(i contract.UserInteractor) echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, echo.Map{"msg": "user verified"})
+	}
+}
+
+func UpdateAvatar(i contract.UserInteractor, cfg config.ServerCfg) echo.HandlerFunc {
+
+	return func(c echo.Context) error {
+
+		req := dto.UpdateProfilePicReq{}
+
+		userCtx := c.Get(middleware.CtxUserKey)
+		if userCtx == nil {
+			return c.JSON(http.StatusUnauthorized, echo.Map{"error": errors.ErrInvalidToken.Error()})
+		}
+		user := userCtx.(entity.User)
+		req.ID = user.Id
+
+		fileHeader, err := c.FormFile("avatar")
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		}
+		file, err := fileHeader.Open()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+		defer file.Close()
+
+		req.Image, err = ioutil.ReadAll(file)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+
+		mimetype := http.DetectContentType(req.Image)
+		array := strings.Split(mimetype, "/")
+		if array[0] != "image" {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": "file must be an image"})
+		}
+		req.Format = array[1]
+
+		res, err := i.UpdateProfilePic(c.Request().Context(), req)
+		if err != nil {
+			if err == errors.ErrNotFound {
+				return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+			}
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+
+		res.Link = cfg.Address + "/images/avatars/" + res.Link
+		return c.JSON(http.StatusOK, res)
 	}
 }

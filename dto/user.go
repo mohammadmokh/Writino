@@ -54,3 +54,13 @@ type UpdatePasswordReq struct {
 	Old string `json:"old"`
 	New string `json:"new"`
 }
+
+type UpdateProfilePicReq struct {
+	ID     string
+	Image  []byte
+	Format string
+}
+
+type UpdateProfilePicRes struct {
+	Link string
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"gitlab.com/gocastsian/writino/adaptor/email"
+	"gitlab.com/gocastsian/writino/adaptor/store/filesystem"
 	mongodb "gitlab.com/gocastsian/writino/adaptor/store/mongodb"
 	"gitlab.com/gocastsian/writino/adaptor/store/redis"
 	"gitlab.com/gocastsian/writino/config"
@@ -41,11 +42,15 @@ func New(cfg config.Config) (App, error) {
 	if err != nil {
 		return App{}, err
 	}
+	image, err := filesystem.New(cfg.ImageFs)
+	if err != nil {
+		return App{}, err
+	}
 
 	mailService := email.New(cfg.Email)
 	verficationCode := verificationCode.New(redisClient, verificationCode.Random, verificationCode.ParseVerificationTempl)
 	auth := auth.New(MongoStore, []byte(cfg.JwtSecret), jwt.GenerateTokenPair, jwt.ParseRefToken)
-	user := user.New(MongoStore, mailService, verficationCode)
+	user := user.New(MongoStore, mailService, image, verficationCode)
 	post := post.New(MongoStore)
 	comment := comment.New(MongoStore)
 
