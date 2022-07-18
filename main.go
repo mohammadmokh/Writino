@@ -20,5 +20,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Fatal(v1.New(app, cfg.Server).Run())
+	log.Fatal(v1.New(app, cfg).Run())
 }

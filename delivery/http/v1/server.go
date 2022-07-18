@@ -16,7 +16,7 @@ type Server struct {
 	cfg    config.ServerCfg
 }
 
-func New(app app.App, cfg config.ServerCfg) Server {
+func New(app app.App, cfg config.Config) Server {
 
 	e := echo.New()
 
@@ -26,33 +26,33 @@ func New(app app.App, cfg config.ServerCfg) Server {
 	e.POST("/auth/refresh", auth.Refresh(app.Auth))
 
 	e.POST("/users", user.Register(app.User, app.RegisterVal))
-	e.GET("/users/:username", user.Find(app.User, cfg))
+	e.GET("/users/:username", user.Find(app.User, cfg.Server))
 	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal))
 	e.DELETE("/users", user.Delete(app.User))
 	e.POST("/check/username", user.CheckUsername(app.User))
 	e.POST("/check/email", user.CheckEmail(app.User))
 	e.PATCH("/update/password", user.UpdatePassword(app.User, app.UpdatePasswordVal))
 	e.POST("/verify", user.Verify(app.User))
-	e.PATCH("/update/avatar", user.UpdateAvatar(app.User, cfg))
+	e.PATCH("/update/avatar", user.UpdateAvatar(app.User, cfg.Server))
 
-	e.POST("/posts", post.CreatePost(app.Post, app.CreatePostVal, cfg))
-	e.GET("/posts/:id", post.FindPostByID(app.Post, cfg))
+	e.POST("/posts", post.CreatePost(app.Post, app.CreatePostVal, cfg.Server))
+	e.GET("/posts/:id", post.FindPostByID(app.Post, cfg.Server))
 	e.PATCH("/posts/:id", post.UpdatePost(app.Post, app.UpdatePostVal))
 	e.DELETE("/posts/:id", post.Delete(app.Post))
-	e.GET("/posts/search", post.SearchPost(app.Post, cfg))
-	e.GET("/users/:id/posts", post.FindUsersPosts(app.Post, cfg))
-	e.GET("/posts", post.FindAll(app.Post, cfg))
-	e.GET("/posts", post.FindAll(app.Post, cfg))
+	e.GET("/posts/search", post.SearchPost(app.Post, cfg.Server))
+	e.GET("/users/:id/posts", post.FindUsersPosts(app.Post, cfg.Server))
+	e.GET("/posts", post.FindAll(app.Post, cfg.Server))
+	e.GET("/posts", post.FindAll(app.Post, cfg.Server))
 	e.PUT("/posts/:id/like", post.LikePost(app.Post))
 
 	e.POST("/posts/:id/comments", comment.CreateComment(app.Comment))
-	e.GET("/posts/:id/comments", comment.FindCommentsByPostID(app.Comment, cfg))
+	e.GET("/posts/:id/comments", comment.FindCommentsByPostID(app.Comment, cfg.Server))
 
-	e.Static("/images", "img")
+	e.Static("/images", cfg.ImageFs.BasePath)
 
 	return Server{
 		server: e,
-		cfg:    cfg,
+		cfg:    cfg.Server,
 	}
 }
 
