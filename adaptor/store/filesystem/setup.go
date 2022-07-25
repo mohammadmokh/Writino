@@ -12,7 +12,8 @@ type FsStore struct {
 
 func New(cfg config.FsCfg) (FsStore, error) {
 
-	err := os.MkdirAll(cfg.BasePath+"/avatars", os.ModePerm)
+	cfg.BasePath = cfg.BasePath + "/avatars/"
+	err := os.MkdirAll(cfg.BasePath, os.ModePerm)
 	if err != nil {
 		return FsStore{}, err
 	}

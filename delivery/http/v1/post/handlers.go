@@ -50,8 +50,12 @@ func FindPostByID(i contract.PostInteractor, cfg config.ServerCfg) echo.HandlerF
 
 		req := dto.FindPostByIDReq{}
 		id := c.Param("id")
+
+		user := entity.User{}
 		userCtx := c.Get(middleware.CtxUserKey)
-		user := userCtx.(entity.User)
+		if userCtx != nil {
+			user = userCtx.(entity.User)
+		}
 
 		req.ID = id
 		req.UserID = user.Id

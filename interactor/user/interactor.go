@@ -14,16 +14,16 @@ import (
 type UserIntractor struct {
 	store            contract.UserStore
 	mail             contract.EmailService
-	image            contract.ImageStore
+	profilePic       contract.ProfilePicStore
 	verificationCode contract.VerificationCodeInteractor
 }
 
-func New(store contract.UserStore, mail contract.EmailService, image contract.ImageStore,
+func New(store contract.UserStore, mail contract.EmailService, profilePic contract.ProfilePicStore,
 	verificationCode contract.VerificationCodeInteractor) contract.UserInteractor {
 	return UserIntractor{
 		store:            store,
 		mail:             mail,
-		image:            image,
+		profilePic:       profilePic,
 		verificationCode: verificationCode,
 	}
 }
@@ -171,7 +171,7 @@ func (i UserIntractor) UpdateProfilePic(ctx context.Context, req dto.UpdateProfi
 	}
 
 	filename := user.Id + "." + req.Format
-	err = i.image.SaveImage(req.Image, "avatars/"+filename)
+	err = i.profilePic.SaveImage(req.Image, filename)
 	if err != nil {
 		return dto.UpdateProfilePicRes{}, err
 	}

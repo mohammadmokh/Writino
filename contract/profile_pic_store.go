@@ -1,6 +1,6 @@
 package contract
 
-type ImageStore interface {
+type ProfilePicStore interface {
 	SaveImage([]byte, string) error
 	DeleteImage(string) error
 }

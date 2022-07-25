@@ -5,12 +5,12 @@ import (
 	"os"
 )
 
-func (f FsStore) SaveImage(image []byte, path string) error {
+func (f FsStore) SaveImage(image []byte, filename string) error {
 
 	var fo *os.File
 	var err error
 
-	fulpath := f.BasePath + "/" + path
+	fulpath := f.BasePath + filename
 	// if file dosn't exists we will create it
 	if fo, err = os.OpenFile(fulpath, os.O_APPEND|os.O_WRONLY, os.ModeAppend); err != nil {
 
@@ -26,8 +26,8 @@ func (f FsStore) SaveImage(image []byte, path string) error {
 	return err
 }
 
-func (f FsStore) DeleteImage(path string) error {
+func (f FsStore) DeleteImage(filename string) error {
 
-	err := os.Remove(f.BasePath + "/" + path)
+	err := os.Remove(f.BasePath + filename)
 	return err
 }
