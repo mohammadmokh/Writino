@@ -18,7 +18,6 @@ func ValidateUpdateUser(req dto.UpdateUserReq) error {
 		&req,
 		validation.Field(&req.Bio, validation.Length(0, 500)),
 		validation.Field(&req.DisplayName, validation.Length(0, 256)),
-		validation.Field(&req.Username, validation.Length(3, 32), is.Alphanumeric),
 		validation.Field(&req.ProfilePic, is.URL),
 	)
 }

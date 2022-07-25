@@ -12,5 +12,4 @@ type UserStore interface {
 	UpdateUser(context.Context, entity.User) error
 	DeleteUser(context.Context, string) error
 	FindUserByEmail(context.Context, string) (entity.User, error)
-	FindUserByUsername(context.Context, string) (entity.User, error)
 }

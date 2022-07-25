@@ -10,7 +10,6 @@ import (
 type User struct {
 	Id          primitive.ObjectID `bson:"_id"`
 	Password    string             `bson:"password"`
-	Username    string             `bson:"username"`
 	DisplayName string             `bson:"display_name"`
 	ProfilePic  string             `bson:"profile_pic,omitempty"`
 	Bio         string             `bson:"bio,omitempty"`
@@ -26,7 +25,6 @@ func MapFromUserEntity(user entity.User) User {
 	return User{
 		Id:          ObjID,
 		Password:    user.Password,
-		Username:    user.Username,
 		DisplayName: user.DisplayName,
 		ProfilePic:  user.ProfilePic,
 		Bio:         user.Bio,
@@ -43,7 +41,6 @@ func MapToUserEntity(user User) entity.User {
 	return entity.User{
 		Id:          strID,
 		Password:    user.Password,
-		Username:    user.Username,
 		DisplayName: user.DisplayName,
 		ProfilePic:  user.ProfilePic,
 		Bio:         user.Bio,

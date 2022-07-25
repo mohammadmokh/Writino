@@ -43,26 +43,6 @@ func Register(i contract.UserInteractor, validator contract.ValidateRegisterUser
 	}
 }
 
-func CheckUsername(i contract.UserInteractor) echo.HandlerFunc {
-
-	return func(c echo.Context) error {
-
-		req := dto.CheckUsernameReq{}
-		err := c.Bind(&req)
-
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
-		}
-
-		res, err := i.CheckUsername(c.Request().Context(), req)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
-		}
-
-		return c.JSON(http.StatusOK, res)
-	}
-}
-
 func CheckEmail(i contract.UserInteractor) echo.HandlerFunc {
 
 	return func(c echo.Context) error {

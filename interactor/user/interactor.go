@@ -2,10 +2,8 @@ package user
 
 import (
 	"context"
-	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"gitlab.com/gocastsian/writino/contract"
 	"gitlab.com/gocastsian/writino/dto"
 	"gitlab.com/gocastsian/writino/entity"
@@ -37,13 +35,10 @@ func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq) error 
 		return err
 	}
 
-	uuid := strings.Replace(uuid.New().String(), "-", "", -1)
-
 	user := entity.User{
 
 		Email:       req.Email,
 		Password:    string(hashedPassword),
-		Username:    uuid,
 		DisplayName: req.Email,
 		IsVerified:  false,
 	}
@@ -60,19 +55,6 @@ func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq) error 
 	err = i.mail.SendEmail(user.Email, "Verification Code", body)
 	return err
 
-}
-
-func (i UserIntractor) CheckUsername(ctx context.Context, req dto.CheckUsernameReq) (dto.CheckUsernameRes, error) {
-
-	_, err := i.store.FindUserByUsername(ctx, req.Username)
-	if err != nil {
-		if err == errors.ErrNotFound {
-			return dto.CheckUsernameRes{IsUnique: true}, nil
-		}
-		return dto.CheckUsernameRes{}, err
-	}
-
-	return dto.CheckUsernameRes{IsUnique: false}, nil
 }
 
 func (i UserIntractor) CheckEmail(ctx context.Context, req dto.CheckEmailReq) (dto.CheckEmailRes, error) {
@@ -110,9 +92,7 @@ func (i UserIntractor) Update(ctx context.Context, req dto.UpdateUserReq) error 
 	if req.DisplayName != nil {
 		user.DisplayName = *req.DisplayName
 	}
-	if req.Username != nil {
-		user.Username = *req.Username
-	}
+
 	if req.ProfilePic != nil {
 		user.ProfilePic = *req.ProfilePic
 	}

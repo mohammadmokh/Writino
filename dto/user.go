@@ -10,14 +10,6 @@ type VerifyUserReq struct {
 	VerificationCode string `json:"verfication_code"`
 }
 
-type CheckUsernameReq struct {
-	Username string `json:"username"`
-}
-
-type CheckUsernameRes struct {
-	IsUnique bool `json:"is_unique"`
-}
-
 type CheckEmailReq struct {
 	Email string `json:"email"`
 }
@@ -29,7 +21,6 @@ type CheckEmailRes struct {
 type UpdateUserReq struct {
 	ID          string  `json:"-"`
 	ProfilePic  *string `json:"profile_pic"`
-	Username    *string `json:"username"`
 	DisplayName *string `json:"display_name"`
 	Bio         *string `json:"bio"`
 }

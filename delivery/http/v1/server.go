@@ -29,7 +29,6 @@ func New(app app.App, cfg config.Config) Server {
 	e.GET("/users/:id", user.Find(app.User, cfg.Server))
 	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal))
 	e.DELETE("/users", user.Delete(app.User))
-	e.POST("/check/username", user.CheckUsername(app.User))
 	e.POST("/check/email", user.CheckEmail(app.User))
 	e.PATCH("/update/password", user.UpdatePassword(app.User, app.UpdatePasswordVal))
 	e.POST("/verify", user.Verify(app.User))

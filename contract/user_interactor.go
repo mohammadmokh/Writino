@@ -7,7 +7,6 @@ import (
 )
 
 type UserInteractor interface {
-	CheckUsername(context.Context, dto.CheckUsernameReq) (dto.CheckUsernameRes, error)
 	CheckEmail(context.Context, dto.CheckEmailReq) (dto.CheckEmailRes, error)
 	Register(context.Context, dto.RegisterReq) error
 	Update(context.Context, dto.UpdateUserReq) error

@@ -66,22 +66,6 @@ func (m MongodbStore) FindUserByEmail(ctx context.Context, email string) (entity
 	return models.MapToUserEntity(user), err
 }
 
-func (m MongodbStore) FindUserByUsername(ctx context.Context, username string) (entity.User, error) {
-
-	coll := m.db.Collection("users")
-
-	var user models.User
-	filter := bson.D{{"username", username}}
-	res := coll.FindOne(ctx, filter, nil)
-
-	if res.Err() == mongo.ErrNoDocuments {
-		return entity.User{}, errors.ErrNotFound
-	}
-
-	err := res.Decode(&user)
-	return models.MapToUserEntity(user), err
-}
-
 func (m MongodbStore) UpdateUser(ctx context.Context, user entity.User) error {
 
 	coll := m.db.Collection("users")

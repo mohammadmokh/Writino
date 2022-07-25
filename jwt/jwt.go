@@ -8,20 +8,11 @@ import (
 	"gitlab.com/gocastsian/writino/errors"
 )
 
-type claims struct {
-	Username string
-	UserID   string
-	jwt.StandardClaims
-}
-
 func GenerateTokenPair(secret []byte, user entity.User) (map[string]string, error) {
 
-	claims := claims{
-		Username: user.Username,
-		UserID:   user.Id,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(15 * time.Minute).Unix(),
-		},
+	claims := jwt.StandardClaims{
+		ExpiresAt: time.Now().Add(15 * time.Minute).Unix(),
+		Subject:   user.Id,
 	}
 	refClaims := jwt.StandardClaims{
 		ExpiresAt: time.Now().AddDate(0, 1, 0).Unix(),
@@ -49,17 +40,16 @@ func GenerateTokenPair(secret []byte, user entity.User) (map[string]string, erro
 
 func ParseToken(secret []byte, token string) (entity.User, error) {
 
-	parsed, err := jwt.ParseWithClaims(token, &claims{}, func(token *jwt.Token) (interface{}, error) {
+	parsed, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 	if err != nil || !parsed.Valid {
 		return entity.User{}, errors.ErrInvalidToken
 	}
 
-	claims := parsed.Claims.(*claims)
+	claims := parsed.Claims.(*jwt.StandardClaims)
 	return entity.User{
-		Username: claims.Username,
-		Id:       claims.UserID,
+		Id: claims.Subject,
 	}, nil
 }
 
