@@ -26,7 +26,7 @@ func New(app app.App, cfg config.Config) Server {
 	e.POST("/auth/refresh", auth.Refresh(app.Auth))
 
 	e.POST("/users", user.Register(app.User, app.RegisterVal))
-	e.GET("/users/:username", user.Find(app.User, cfg.Server))
+	e.GET("/users/:id", user.Find(app.User, cfg.Server))
 	e.PATCH("/users", user.Update(app.User, app.UpdateUserVal))
 	e.DELETE("/users", user.Delete(app.User))
 	e.POST("/check/username", user.CheckUsername(app.User))

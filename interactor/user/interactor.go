@@ -129,7 +129,7 @@ func (i UserIntractor) DeleteAccount(ctx context.Context, req dto.DeleteUserReq)
 
 func (i UserIntractor) Find(ctx context.Context, req dto.FindUserReq) (dto.FindUserRes, error) {
 
-	user, err := i.store.FindUserByUsername(ctx, req.Username)
+	user, err := i.store.FindUser(ctx, req.Id)
 	if err != nil {
 		return dto.FindUserRes{}, err
 	}

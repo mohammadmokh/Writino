@@ -39,7 +39,7 @@ type DeleteUserReq struct {
 }
 
 type FindUserReq struct {
-	Username string
+	Id string
 }
 
 type FindUserRes struct {

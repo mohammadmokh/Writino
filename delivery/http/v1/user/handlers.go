@@ -148,8 +148,8 @@ func Find(i contract.UserInteractor, cfg config.ServerCfg) echo.HandlerFunc {
 
 		req := dto.FindUserReq{}
 
-		username := c.Param("username")
-		req.Username = username
+		id := c.Param("id")
+		req.Id = id
 
 		res, err := i.Find(c.Request().Context(), req)
 		if err != nil {
