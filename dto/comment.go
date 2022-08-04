@@ -21,3 +21,7 @@ type FindCommentRes struct {
 	TotalCount int       `json:"total"`
 	Comments   []Comment `json:"comments"`
 }
+
+type DeleteUserCommentsReq struct {
+	UserID string
+}

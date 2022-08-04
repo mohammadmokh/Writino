@@ -20,4 +20,5 @@ type FindCommentRes struct {
 type CommentStore interface {
 	CreateComment(context.Context, entity.Comment, string) error
 	FindCommentsByPostID(context.Context, FindCommentfilters) (FindCommentRes, error)
+	DeleteCommentsByUserID(context.Context, string) error
 }

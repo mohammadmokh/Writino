@@ -50,9 +50,19 @@ func New(cfg config.Config) (App, error) {
 	mailService := email.New(cfg.Email)
 	verficationCode := verificationCode.New(redisClient, verificationCode.Random, verificationCode.ParseVerificationTempl)
 	auth := auth.New(MongoStore, []byte(cfg.JwtSecret), jwt.GenerateTokenPair, jwt.ParseRefToken)
-	user := user.New(MongoStore, mailService, image, verficationCode)
 	post := post.New(MongoStore)
 	comment := comment.New(MongoStore)
+
+	userBuilder := user.NewBuilder()
+	userBuilder.
+		SetCommentService(comment).
+		SetMailService(mailService).
+		SetPostSerivce(post).
+		SetProfilePicStore(image).
+		SetUserStore(MongoStore).
+		SetVerCodeService(verficationCode)
+
+	user := userBuilder.Build()
 
 	return App{
 		JwtSecret:         cfg.JwtSecret,

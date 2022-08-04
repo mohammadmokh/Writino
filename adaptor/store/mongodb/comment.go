@@ -97,3 +97,18 @@ func (m MongodbStore) FindCommentsByPostID(ctx context.Context, filters contract
 		TotalCount: int(count),
 	}, err
 }
+
+func (m MongodbStore) DeleteCommentsByUserID(ctx context.Context, userID string) error {
+
+	coll := m.db.Collection("comments")
+
+	userObj, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"user_id": userObj}
+	_, err = coll.DeleteMany(ctx, filter)
+
+	return err
+}

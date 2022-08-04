@@ -52,3 +52,8 @@ func (i CommentInteractor) FindCommentsByPostID(ctx context.Context, req dto.Fin
 
 	return res, nil
 }
+
+func (i CommentInteractor) DeleteUserComments(ctx context.Context, req dto.DeleteUserCommentsReq) error {
+
+	return i.store.DeleteCommentsByUserID(ctx, req.UserID)
+}

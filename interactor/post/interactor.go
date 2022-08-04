@@ -220,3 +220,7 @@ func (i PostInteractor) LikePost(ctx context.Context, req dto.LikePostReq) error
 	err := i.store.LikePost(ctx, req.PostID, req.UserID)
 	return err
 }
+
+func (i PostInteractor) DeleteUserPosts(ctx context.Context, req dto.DeleteUserPostsReq) error {
+	return i.store.DeletePostsByUserID(ctx, req.UserID)
+}

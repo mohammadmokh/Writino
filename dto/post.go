@@ -75,3 +75,7 @@ type LikePostReq struct {
 	UserID string
 	PostID string
 }
+
+type DeleteUserPostsReq struct {
+	UserID string
+}

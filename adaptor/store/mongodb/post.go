@@ -243,3 +243,17 @@ func (m MongodbStore) LikePost(ctx context.Context, postID string, userID string
 	return nil
 
 }
+
+func (m MongodbStore) DeletePostsByUserID(ctx context.Context, userID string) error {
+
+	coll := m.db.Collection("posts")
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"author_id": userObjID}
+	_, err = coll.DeleteMany(ctx, filter)
+	return err
+}

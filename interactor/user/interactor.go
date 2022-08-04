@@ -11,21 +11,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserIntractor struct {
-	store            contract.UserStore
-	mail             contract.EmailService
-	profilePic       contract.ProfilePicStore
-	verificationCode contract.VerificationCodeInteractor
+type PostInteractor interface {
+	DeleteUserPosts(context.Context, dto.DeleteUserPostsReq) error
 }
 
-func New(store contract.UserStore, mail contract.EmailService, profilePic contract.ProfilePicStore,
-	verificationCode contract.VerificationCodeInteractor) contract.UserInteractor {
-	return UserIntractor{
-		store:            store,
-		mail:             mail,
-		profilePic:       profilePic,
-		verificationCode: verificationCode,
-	}
+type CommentInteractor interface {
+	DeleteUserComments(context.Context, dto.DeleteUserCommentsReq) error
+}
+
+type UserIntractor struct {
+	store             contract.UserStore
+	mail              contract.EmailService
+	profilePic        contract.ProfilePicStore
+	verificationCode  contract.VerificationCodeInteractor
+	postInteractor    PostInteractor
+	commentInteractor CommentInteractor
 }
 
 func (i UserIntractor) Register(ctx context.Context, req dto.RegisterReq) error {
@@ -103,7 +103,21 @@ func (i UserIntractor) Update(ctx context.Context, req dto.UpdateUserReq) error 
 
 func (i UserIntractor) DeleteAccount(ctx context.Context, req dto.DeleteUserReq) error {
 
-	err := i.store.DeleteUser(ctx, req.Id)
+	err := i.postInteractor.DeleteUserPosts(ctx, dto.DeleteUserPostsReq{
+		UserID: req.Id,
+	})
+	if err != nil {
+		return err
+	}
+
+	err = i.commentInteractor.DeleteUserComments(ctx, dto.DeleteUserCommentsReq{
+		UserID: req.Id,
+	})
+	if err != nil {
+		return err
+	}
+
+	err = i.store.DeleteUser(ctx, req.Id)
 	return err
 }
 
