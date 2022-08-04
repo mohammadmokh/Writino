@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/contract"
-	"gitlab.com/gocastsian/writino/dto"
-	"gitlab.com/gocastsian/writino/errors"
+	"github.com/mohammadmokh/writino/contract"
+	"github.com/mohammadmokh/writino/dto"
+	"github.com/mohammadmokh/writino/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 

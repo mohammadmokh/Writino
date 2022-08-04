@@ -1,6 +1,6 @@
 package contract
 
-import "gitlab.com/gocastsian/writino/entity"
+import "github.com/mohammadmokh/writino/entity"
 
 type (
 	Random                     func() (string, error)

@@ -3,8 +3,8 @@ package verificationCode
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/contract"
-	"gitlab.com/gocastsian/writino/entity"
+	"github.com/mohammadmokh/writino/contract"
+	"github.com/mohammadmokh/writino/entity"
 )
 
 type verificationCodeInteractor struct {

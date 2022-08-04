@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"gitlab.com/gocastsian/writino/app"
-	"gitlab.com/gocastsian/writino/config"
-	v1 "gitlab.com/gocastsian/writino/delivery/http/v1"
+	"github.com/mohammadmokh/writino/app"
+	"github.com/mohammadmokh/writino/config"
+	v1 "github.com/mohammadmokh/writino/delivery/http/v1"
 )
 
 func main() {

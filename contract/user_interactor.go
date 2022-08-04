@@ -3,7 +3,7 @@ package contract
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/dto"
+	"github.com/mohammadmokh/writino/dto"
 )
 
 type UserInteractor interface {

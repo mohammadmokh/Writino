@@ -2,13 +2,13 @@ package v1
 
 import (
 	"github.com/labstack/echo/v4"
-	"gitlab.com/gocastsian/writino/app"
-	"gitlab.com/gocastsian/writino/config"
-	"gitlab.com/gocastsian/writino/delivery/http/v1/auth"
-	"gitlab.com/gocastsian/writino/delivery/http/v1/comment"
-	"gitlab.com/gocastsian/writino/delivery/http/v1/middleware"
-	"gitlab.com/gocastsian/writino/delivery/http/v1/post"
-	"gitlab.com/gocastsian/writino/delivery/http/v1/user"
+	"github.com/mohammadmokh/writino/app"
+	"github.com/mohammadmokh/writino/config"
+	"github.com/mohammadmokh/writino/delivery/http/v1/auth"
+	"github.com/mohammadmokh/writino/delivery/http/v1/comment"
+	"github.com/mohammadmokh/writino/delivery/http/v1/middleware"
+	"github.com/mohammadmokh/writino/delivery/http/v1/post"
+	"github.com/mohammadmokh/writino/delivery/http/v1/user"
 )
 
 type Server struct {

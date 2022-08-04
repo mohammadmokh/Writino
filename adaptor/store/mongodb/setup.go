@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"gitlab.com/gocastsian/writino/config"
+	"github.com/mohammadmokh/writino/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

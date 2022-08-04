@@ -3,7 +3,7 @@ package filesystem
 import (
 	"os"
 
-	"gitlab.com/gocastsian/writino/config"
+	"github.com/mohammadmokh/writino/config"
 )
 
 type FsStore struct {

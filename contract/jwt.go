@@ -1,6 +1,6 @@
 package contract
 
-import "gitlab.com/gocastsian/writino/entity"
+import "github.com/mohammadmokh/writino/entity"
 
 type (
 	GenerateTokenPair func(secret []byte, user entity.User) (map[string]string, error)

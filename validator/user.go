@@ -3,7 +3,7 @@ package validator
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
-	"gitlab.com/gocastsian/writino/dto"
+	"github.com/mohammadmokh/writino/dto"
 )
 
 func ValidateRegisterUser(req dto.RegisterReq) error {

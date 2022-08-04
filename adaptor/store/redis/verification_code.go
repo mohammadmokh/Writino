@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"gitlab.com/gocastsian/writino/entity"
-	"gitlab.com/gocastsian/writino/errors"
+	"github.com/mohammadmokh/writino/entity"
+	"github.com/mohammadmokh/writino/errors"
 )
 
 func (r RedisStore) CreateVerCode(ctx context.Context, verCode entity.VerificationCode) error {

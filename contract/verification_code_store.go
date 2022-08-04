@@ -3,7 +3,7 @@ package contract
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/entity"
+	"github.com/mohammadmokh/writino/entity"
 )
 
 type VerficationCodeStore interface {

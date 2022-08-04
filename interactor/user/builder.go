@@ -1,6 +1,6 @@
 package user
 
-import "gitlab.com/gocastsian/writino/contract"
+import "github.com/mohammadmokh/writino/contract"
 
 type UserBuilder struct {
 	user UserIntractor

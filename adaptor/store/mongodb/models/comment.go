@@ -1,7 +1,7 @@
 package models
 
 import (
-	"gitlab.com/gocastsian/writino/entity"
+	"github.com/mohammadmokh/writino/entity"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

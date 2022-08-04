@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"gitlab.com/gocastsian/writino/contract"
+	"github.com/mohammadmokh/writino/contract"
 )
 
 const CtxUserKey = "user"

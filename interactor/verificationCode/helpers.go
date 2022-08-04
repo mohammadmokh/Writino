@@ -7,7 +7,7 @@ import (
 	"math/big"
 	"strconv"
 
-	"gitlab.com/gocastsian/writino/entity"
+	"github.com/mohammadmokh/writino/entity"
 )
 
 func Random() (string, error) {

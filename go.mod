@@ -1,4 +1,4 @@
-module gitlab.com/gocastsian/writino
+module github.com/mohammadmokh/writino
 
 go 1.16
 

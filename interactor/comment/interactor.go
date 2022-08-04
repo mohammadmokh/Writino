@@ -3,9 +3,9 @@ package comment
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/contract"
-	"gitlab.com/gocastsian/writino/dto"
-	"gitlab.com/gocastsian/writino/entity"
+	"github.com/mohammadmokh/writino/contract"
+	"github.com/mohammadmokh/writino/dto"
+	"github.com/mohammadmokh/writino/entity"
 )
 
 type CommentInteractor struct {

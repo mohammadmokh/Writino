@@ -2,7 +2,7 @@ package validator
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
-	"gitlab.com/gocastsian/writino/dto"
+	"github.com/mohammadmokh/writino/dto"
 )
 
 func ValidateCreatePost(req dto.CreatePostReq) error {

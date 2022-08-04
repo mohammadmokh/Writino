@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-redis/redis/v8"
-	"gitlab.com/gocastsian/writino/config"
+	"github.com/mohammadmokh/writino/config"
 )
 
 type RedisStore struct {

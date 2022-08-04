@@ -3,10 +3,10 @@ package store
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/adaptor/store/mongodb/models"
-	"gitlab.com/gocastsian/writino/contract"
-	"gitlab.com/gocastsian/writino/entity"
-	"gitlab.com/gocastsian/writino/errors"
+	"github.com/mohammadmokh/writino/adaptor/store/mongodb/models"
+	"github.com/mohammadmokh/writino/contract"
+	"github.com/mohammadmokh/writino/entity"
+	"github.com/mohammadmokh/writino/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

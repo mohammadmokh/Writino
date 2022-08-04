@@ -1,7 +1,7 @@
 package contract
 
 import (
-	"gitlab.com/gocastsian/writino/dto"
+	"github.com/mohammadmokh/writino/dto"
 )
 
 type (

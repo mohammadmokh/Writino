@@ -5,12 +5,12 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"gitlab.com/gocastsian/writino/config"
-	"gitlab.com/gocastsian/writino/contract"
-	"gitlab.com/gocastsian/writino/delivery/http/v1/middleware"
-	"gitlab.com/gocastsian/writino/dto"
-	"gitlab.com/gocastsian/writino/entity"
-	"gitlab.com/gocastsian/writino/errors"
+	"github.com/mohammadmokh/writino/config"
+	"github.com/mohammadmokh/writino/contract"
+	"github.com/mohammadmokh/writino/delivery/http/v1/middleware"
+	"github.com/mohammadmokh/writino/dto"
+	"github.com/mohammadmokh/writino/entity"
+	"github.com/mohammadmokh/writino/errors"
 )
 
 func CreatePost(i contract.PostInteractor, validator contract.ValidateCreatePost, cfg config.ServerCfg) echo.HandlerFunc {

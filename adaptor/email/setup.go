@@ -1,6 +1,6 @@
 package email
 
-import "gitlab.com/gocastsian/writino/config"
+import "github.com/mohammadmokh/writino/config"
 
 type emailService struct {
 	config.EmailCfg

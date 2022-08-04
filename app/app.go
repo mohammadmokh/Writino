@@ -3,19 +3,19 @@ package app
 import (
 	"context"
 
-	"gitlab.com/gocastsian/writino/adaptor/email"
-	"gitlab.com/gocastsian/writino/adaptor/store/filesystem"
-	mongodb "gitlab.com/gocastsian/writino/adaptor/store/mongodb"
-	"gitlab.com/gocastsian/writino/adaptor/store/redis"
-	"gitlab.com/gocastsian/writino/config"
-	"gitlab.com/gocastsian/writino/contract"
-	"gitlab.com/gocastsian/writino/interactor/auth"
-	"gitlab.com/gocastsian/writino/interactor/comment"
-	"gitlab.com/gocastsian/writino/interactor/post"
-	"gitlab.com/gocastsian/writino/interactor/user"
-	"gitlab.com/gocastsian/writino/interactor/verificationCode"
-	"gitlab.com/gocastsian/writino/jwt"
-	"gitlab.com/gocastsian/writino/validator"
+	"github.com/mohammadmokh/writino/adaptor/email"
+	"github.com/mohammadmokh/writino/adaptor/store/filesystem"
+	mongodb "github.com/mohammadmokh/writino/adaptor/store/mongodb"
+	"github.com/mohammadmokh/writino/adaptor/store/redis"
+	"github.com/mohammadmokh/writino/config"
+	"github.com/mohammadmokh/writino/contract"
+	"github.com/mohammadmokh/writino/interactor/auth"
+	"github.com/mohammadmokh/writino/interactor/comment"
+	"github.com/mohammadmokh/writino/interactor/post"
+	"github.com/mohammadmokh/writino/interactor/user"
+	"github.com/mohammadmokh/writino/interactor/verificationCode"
+	"github.com/mohammadmokh/writino/jwt"
+	"github.com/mohammadmokh/writino/validator"
 )
 
 type App struct {

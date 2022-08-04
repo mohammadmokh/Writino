@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"gitlab.com/gocastsian/writino/entity"
-	"gitlab.com/gocastsian/writino/errors"
+	"github.com/mohammadmokh/writino/entity"
+	"github.com/mohammadmokh/writino/errors"
 )
 
 func GenerateTokenPair(secret []byte, user entity.User) (map[string]string, error) {
